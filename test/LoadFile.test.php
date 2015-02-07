@@ -91,4 +91,27 @@ public function testGetSingleRow($filePath) {
 	}
 }
 
+/**
+ * @dataProvider data_randomFilePath
+ */
+public function testIterator($filePath) {
+	$originalRows = TestHelper::createCsv($filePath, 10);
+	$csv = new Csv($filePath);
+
+	foreach ($csv as $rowNumber => $row) {
+		foreach ($row as $fieldName => $value) {
+			$fieldIndex = array_search($fieldName, $originalRows[0]);
+			$this->assertEquals($value, $originalRows[$rowNumber][$fieldIndex]);
+		}
+	}
+
+	// Do it again to check that pointer is reset.
+	foreach ($csv as $rowNumber => $row) {
+		foreach ($row as $fieldName => $value) {
+			$fieldIndex = array_search($fieldName, $originalRows[0]);
+			$this->assertEquals($value, $originalRows[$rowNumber][$fieldIndex]);
+		}
+	}
+}
+
 }#
