@@ -72,7 +72,7 @@ public function testHeaderRowLoad($filePath) {
 /**
  * @dataProvider data_randomFilePath
  */
-public function testFirstRowLoad($filePath) {
+public function testGetSingleRow($filePath) {
 	$rows = TestHelper::createCsv($filePath);
 	$csv = new Csv($filePath);
 
@@ -81,6 +81,13 @@ public function testFirstRowLoad($filePath) {
 	foreach ($rows[1] as $i => $value) {
 		$headerName = $rows[0][$i];
 		$this->assertEquals($firstRow[$headerName], $rows[1][$i]);
+	}
+
+	$thirdRow = $csv->get(2);
+
+	foreach ($rows[3] as $i => $value) {
+		$headerName = $rows[0][$i];
+		$this->assertEquals($thirdRow[$headerName], $rows[3][$i]);
 	}
 }
 
