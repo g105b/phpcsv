@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<phpunit>
+<phpunit bootstrap="TestHelper.php">
 	<testsuites>
 		<testsuite name="Unit Tests">
 			<directory suffix=".test.php">.</directory>
@@ -20,6 +20,7 @@
 	</logging>
 	<filter>
 		<blacklist>
+			<file>TestHelper.php</file>
 			<directory>../vendor</directory>
 		</blacklist>
 	</filter>

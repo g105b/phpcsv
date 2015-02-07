@@ -10,4 +10,14 @@ namespace g105b\phpcsv;
 
 class Csv {
 
+private $filePath;
+
+public function __construct($filePath) {
+	$this->filePath = $filePath;
+}
+
+public function getFilePath() {
+	return $this->filePath;
+}
+
 }#
