@@ -15,13 +15,19 @@ private static $recordRandomLength = [10, 1000];
  * Creates a CSV file at the provided path and fills it with random data.
  *
  * @param string $filePath Absolute path to file on disk
+ *
+ * @return array Array of rows added to the CSV
  */
 public static function createCsv($filePath, $records = 0) {
+	$rows = [];
+
 	if(!is_dir(dirname($filePath))) {
 		mkdir(dirname($filePath), 0775, true);
 	}
 	$fp = fopen($filePath, "w");
 	fputcsv($fp, self::$headers);
+
+	$rows []= self::$headers;
 
 	if($records === 0) {
 		$records = rand(
@@ -39,16 +45,22 @@ public static function createCsv($filePath, $records = 0) {
 		$phone = rand(1000000000, 1999999999);
 		$phone = "0" . substr($phone, 0, 4) . " " . substr($phone, 4);
 
-		fputcsv($fp, [
+		$data = [
 			$name[0],
 			$name[1],
 			$age,
 			$gender,
 			$phone,
-		]);
+		];
+
+		$rows []= $data;
+
+		fputcsv($fp, $data);
 	}
 
 	fclose($fp);
+
+	return $rows;
 }
 
 /**

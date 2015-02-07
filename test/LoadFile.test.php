@@ -24,11 +24,6 @@ public function setTempPath() {
 	$this->tempPath = sys_get_temp_dir() . "/g105b-phpcsv";
 }
 
-public function testAutoloads() {
-	$csv = new Csv(null);
-	$this->assertInstanceOf("\\g105b\\phpcsv\\Csv", $csv);
-}
-
 /**
  * Returns an array of randomised filepaths to CSV files within nested temp
  * directories.
@@ -59,9 +54,19 @@ public function data_randomFilePath() {
  */
 public function testLoadCsvFile($filePath) {
 	TestHelper::createCsv($filePath);
-
 	$csv = new Csv($filePath);
 	$this->assertEquals($filePath, $csv->getFilePath());
+}
+
+/**
+ * @dataProvider data_randomFilePath
+ */
+public function testHeaderRowLoad($filePath) {
+	$rows = TestHelper::createCsv($filePath);
+	$csv = new Csv($filePath);
+
+	$headerRow = $csv->getHeaders();
+	$this->assertEquals($rows[0], $headerRow);
 }
 
 }#
