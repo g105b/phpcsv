@@ -34,10 +34,9 @@ public function __construct($filePath) {
  * CSV control settings.
  */
 private function saveHeaders() {
-	$position = $this->file->ftell();
 	$this->file->rewind();
 	$this->headers = $this->file->current();
-	$this->file->seek($position);
+	$this->file->next();
 }
 
 /**
@@ -78,15 +77,20 @@ public function getHeaders() {
  * @param null|int $index Zero-based row number
  * @param array $fetchFields List of fields to fetch
  *
- * @return array Associative array of fields
+ * @return array|bool Associative array of fields, or false if index is out
+ * of bounds
  */
 public function get($index = null, $fetchFields = []) {
 	if(is_null($index)) {
-		$index = $this->file->key();
+		$index = $this->file->key() - 1;
 	}
 
-	while($this->file->key() <= $index) {
+	while($index >= $this->file->key()) {
 		$this->file->next();
+	}
+
+	if(!$this->file->valid()) {
+		return false;
 	}
 
 	$data = $this->file->current();

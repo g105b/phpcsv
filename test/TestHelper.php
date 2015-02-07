@@ -7,7 +7,14 @@ namespace g105b\phpcsv;
 
 class TestHelper {
 
-private static $headers = ["firstName", "lastName", "age", "gender", "phone"];
+private static $headers = [
+	"firstName",
+	"lastName",
+	"age",
+	"gender",
+	"phone",
+	"rowNum",
+];
 private static $nameLength = [4, 10];
 private static $characterList = ["aeiou", "bcdfghjklmnprstuvwyz"];
 private static $recordRandomLength = [10, 1000];
@@ -51,6 +58,7 @@ public static function createCsv($filePath, $records = 0) {
 			$age,
 			$gender,
 			$phone,
+			$i,
 		];
 
 		$rows []= $data;

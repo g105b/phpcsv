@@ -114,4 +114,25 @@ public function testIterator($filePath) {
 	}
 }
 
+/**
+ * @dataProvider data_randomFilePath
+ */
+public function testGetIncrements($filePath) {
+	$originalRows = TestHelper::createCsv($filePath, 10);
+	$csv = new Csv($filePath);
+
+	$rowNumber = 0;
+	while($row = $csv->get()) {
+		$rowNumber++;
+
+		foreach ($row as $fieldName => $value) {
+			$fieldIndex = array_search($fieldName, $originalRows[0]);
+			$this->assertEquals(
+				$originalRows[$rowNumber][$fieldIndex],
+				$value
+			);
+		}
+	}
+}
+
 }#
