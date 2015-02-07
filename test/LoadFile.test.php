@@ -69,4 +69,19 @@ public function testHeaderRowLoad($filePath) {
 	$this->assertEquals($rows[0], $headerRow);
 }
 
+/**
+ * @dataProvider data_randomFilePath
+ */
+public function testFirstRowLoad($filePath) {
+	$rows = TestHelper::createCsv($filePath);
+	$csv = new Csv($filePath);
+
+	$firstRow = $csv->get(0);
+
+	foreach ($rows[1] as $i => $value) {
+		$headerName = $rows[0][$i];
+		$this->assertEquals($firstRow[$headerName], $rows[1][$i]);
+	}
+}
+
 }#

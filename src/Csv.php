@@ -40,6 +40,23 @@ private function saveHeaders() {
 	$this->file->seek($position);
 }
 
+/**
+ * Converts an indexed array of data into an associative array with field names.
+ *
+ * @param array $data Indexed array of data representing row
+ *
+ * @return array Associative array of data with field names
+ */
+private function buildRow($data) {
+	foreach ($data as $i => $value) {
+		$headerName = $this->headers[$i];
+		$data[$headerName] = $value;
+		unset($data[$i]);
+	}
+
+	return $data;
+}
+
 public function getFilePath() {
 	return $this->filePath;
 }
@@ -52,6 +69,31 @@ public function getFilePath() {
  */
 public function getHeaders() {
 	return $this->headers;
+}
+
+/**
+ * Returns the row at the given index, or the current file pointer position if
+ * not supplied. Optionally supply the headers to retrieve, ignoring any others.
+ *
+ * @param null|int $index Zero-based row number
+ * @param array $fetchFields List of fields to fetch
+ *
+ * @return array Associative array of fields
+ */
+public function get($index = null, $fetchFields = []) {
+	if(is_null($index)) {
+		$index = $this->file->key();
+	}
+
+	while($this->file->key() <= $index) {
+		$this->file->next();
+	}
+
+	$data = $this->file->current();
+	$this->file->next();
+
+	$row = $this->buildRow($data);
+	return $row;
 }
 
 }#
