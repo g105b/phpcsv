@@ -1,0 +1,16 @@
+{
+	"name": "g105b/phpcsv",
+	"type": "library",
+	"keywords": ["csv", "import", "export",
+		"read", "write", "filter", "iterate"],
+	"license": "MIT",
+	"autoload": {
+		"psr-4": {
+			"g105b\\phpcsv\\": "src"
+		}
+	},
+
+	"require-dev": {
+		"phpunit/phpunit": "4.5.*"
+	}
+}
