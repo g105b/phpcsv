@@ -10,8 +10,9 @@ namespace g105b\phpcsv;
 
 class LoadFile_Test extends \PHPUnit_Framework_TestCase {
 
-public function testTest() {
-	$this->assertTrue(true);
+public function testAutoloads() {
+	$csv = new Csv();
+	$this->assertInstanceOf("\\g105b\\phpcsv\\Csv", $csv);
 }
 
 }#
