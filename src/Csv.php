@@ -46,7 +46,7 @@ private function saveHeaders() {
  *
  * @return array Associative array of data with field names
  */
-private function buildRow($data) {
+public function buildRow($data) {
 	foreach ($data as $i => $value) {
 		$headerName = $this->headers[$i];
 		$data[$headerName] = $value;
@@ -75,7 +75,7 @@ public function getHeaders() {
  * not supplied. Optionally supply the headers to retrieve, ignoring any others.
  *
  * @param null|int $index Zero-based row number
- * @param array $fetchFields List of fields to fetch
+ * @param array $fetchFields List of fields to include in resulting rows
  *
  * @return array|bool Associative array of fields, or false if index is out
  * of bounds
@@ -98,6 +98,50 @@ public function get($index = null, $fetchFields = []) {
 
 	$row = $this->buildRow($data);
 	return $row;
+}
+
+/**
+ * Returns a filtered array of rows matching the provided field name/value.
+ *
+ * @param string $fieldName Name of field to match on
+ * @param string $fieldValue Value of field to match
+ * @param array $fetchFields List of fields to include in resulting rows
+ *
+ * @return array Array of associative array rows matching the given filter
+ */
+public function getAllBy($fieldName, $fieldValue,
+$fetchFields = [], $count = 0) {
+	$this->file->rewind();
+
+	$result = [];
+
+	while(false !== ($row = $this->get())
+	&& ($count === 0 || count($result) < $count)) {
+		if(!isset($row[$fieldName])) {
+			continue;
+		}
+		if($row[$fieldName] == $fieldValue) {
+			$result []= $row;
+		}
+	}
+
+	return $result;
+}
+
+/**
+ * Returns the first element in the matching rows, without iterating over the
+ * whole data.
+ *
+ * @param string $fieldName Name of field to match on
+ * @param string $fieldValue Value of field to match
+ * @param string $fetchFields List of fields to include
+ *
+ * @return array|null Associative array of first matching row, or null if no
+ * match found
+ */
+public function getBy($fieldName, $fieldValue, $fetchFields = []) {
+	$result = $this->getAllBy($fieldName, $fieldValue, $fetchFields, 1);
+	return $result[0];
 }
 
 }#

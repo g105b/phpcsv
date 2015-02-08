@@ -135,4 +135,56 @@ public function testGetIncrements($filePath) {
 	}
 }
 
+/**
+ * @dataProvider data_randomFilePath
+ */
+public function testGetAllByField($filePath) {
+	$originalRows = TestHelper::createCsv($filePath);
+	$headers = array_shift($originalRows);
+	$csv = new Csv($filePath);
+
+	$result = $csv->getAllBy("gender", "M");
+
+	$filteredRows = array_filter($originalRows, function($row) use ($headers) {
+		$genderFieldNum = array_search("gender", $headers);
+		return $row[$genderFieldNum] === "M";
+	});
+
+	foreach ($filteredRows as $i => $row) {
+		$rowWithHeaders = $csv->buildRow($row);
+		$this->assertContains($rowWithHeaders, $result);
+	}
+}
+
+/**
+ * @dataProvider data_randomFilePath
+ */
+public function testGetAllByFieldThatDoesNotExist($filePath) {
+	TestHelper::createCsv($filePath);
+	$csv = new Csv($filePath);
+	$result = $csv->getAllBy("this-field-does-not-exist", "it's true!");
+	$this->assertEmpty($result);
+}
+
+/**
+ * @dataProvider data_randomFilePath
+ */
+public function testGetByField($filePath) {
+	$originalRows = TestHelper::createCsv($filePath);
+	$headers = array_shift($originalRows);
+	$csv = new Csv($filePath);
+
+	$result = $csv->getBy("gender", "F");
+
+	$filteredRows = array_filter($originalRows, function($row) use ($headers) {
+		$genderFieldNum = array_search("gender", $headers);
+		return $row[$genderFieldNum] === "M";
+	});
+
+	$originalSource = $originalRows[$result["rowNum"]];
+	$rowWithHeaders = $csv->buildRow($originalSource);
+
+	$this->assertEquals($rowWithHeaders, $result);
+}
+
 }#
