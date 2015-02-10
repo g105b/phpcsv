@@ -48,18 +48,18 @@ public function testGetByField($filePath) {
 	$this->assertEquals($rowWithHeaders, $result);
 }
 
-// /**
-//  * @dataProvider data_randomFilePath
-//  */
-// public function testGetSetIdField($filePath) {
-// 	$originalRows = TestHelper::createCsv($filePath, 10);
-// 	$csv = new Csv($filePath);
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testGetSetIdField($filePath) {
+	$originalRows = TestHelper::createCsv($filePath, 10);
+	$csv = new Csv($filePath);
 
-// 	$id = "rowNum";
-// 	$this->assertEquals($csv->setIdField($id), $id);
+	$id = "rowNum";
+	$this->assertEquals($csv->setIdField($id), $id);
 
-// 	$this->assertEquals($id, $csv->getIdField());
-// }
+	$this->assertEquals($id, $csv->getIdField());
+}
 
 // /**
 //  * @dataProvider data_randomFilePath
