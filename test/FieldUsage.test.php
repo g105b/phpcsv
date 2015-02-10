@@ -10,9 +10,6 @@ namespace g105b\phpcsv;
 
 class FieldUsage_Test extends \PHPUnit_Framework_TestCase {
 
-const RANDOM_TEST_COUNT = 10;
-private $tempPath;
-
 public function tearDown() {
 	TestHelper::removeDir(TestHelper::getTempPath());
 }
@@ -92,20 +89,23 @@ public function testGetById($filePath) {
 	$headers = array_shift($originalRows);
 	$csv = new Csv($filePath);
 
-	$id = "rowNum";
-	$rowToCheck = rand(0, count($originalRows) - 1);
+	$idField = "rowNum";
+	$rowToCheck = rand(1, count($originalRows) - 1);
 
-	$csv->setIdField($id);
+	$csv->setIdField($idField);
 	$result = $csv->getById($rowToCheck);
 
 	$filteredRows = array_filter($originalRows, function($row)
-	use($headers, $rowToCheck, $id) {
-		$rowNumFieldNum = array_search($id, $headers);
-		return $row[$rowNumFieldNum] == $id;
+	use($headers, $rowToCheck, $idField) {
+		$rowNumFieldIndex = array_search($idField, $headers);
+		return $row[$rowNumFieldIndex] == $rowToCheck;
 	});
+	// Reset the indices of the filtered array:
+	$filteredRows = array_values($filteredRows);
+	$expectedResult = $csv->buildRow($filteredRows[0]);
 
 	$this->assertCount(1, $filteredRows, 'There should only be one of the ID');
-	$this->assertEquals($filteredRows[0], $result);
+	$this->assertEquals($expectedResult, $result);
 }
 
 }#

@@ -10,8 +10,6 @@ namespace g105b\phpcsv;
 
 class LoadFile_Test extends \PHPUnit_Framework_TestCase {
 
-private $tempPath;
-
 public function tearDown() {
 	TestHelper::removeDir(TestHelper::getTempPath());
 }
