@@ -10,47 +10,14 @@ namespace g105b\phpcsv;
 
 class LoadFile_Test extends \PHPUnit_Framework_TestCase {
 
-const RANDOM_TEST_COUNT = 10;
 private $tempPath;
 
-public function setUp() {
-	$this->setTempPath();
-}
 public function tearDown() {
-	TestHelper::removeDir($this->tempPath);
-}
-
-public function setTempPath() {
-	$this->tempPath = sys_get_temp_dir() . "/g105b-phpcsv";
+	TestHelper::removeDir(TestHelper::getTempPath());
 }
 
 /**
- * Returns an array of randomised filepaths to CSV files within nested temp
- * directories.
- */
-public function data_randomFilePath() {
-	$this->setTempPath();
-	$filePathArray = [];
-
-	$nesting = 3;
-
-	$basePath = $this->tempPath;
-
-	for($i = 0; $i < self::RANDOM_TEST_COUNT; $i++) {
-		$path = $basePath;
-
-		for($nestLevel = 0; $nestLevel < $nesting; $nestLevel++) {
-			$path .= "/" . uniqid("dir");
-			$file = "/" . uniqid("file") . ".csv";
-			$filePathArray []= [$path . $file];
-		}
-	}
-
-	return $filePathArray;
-}
-
-/**
- * @dataProvider data_randomFilePath
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
  */
 public function testLoadCsvFile($filePath) {
 	TestHelper::createCsv($filePath);
@@ -59,7 +26,7 @@ public function testLoadCsvFile($filePath) {
 }
 
 /**
- * @dataProvider data_randomFilePath
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
  */
 public function testHeaderRowLoad($filePath) {
 	$rows = TestHelper::createCsv($filePath);
@@ -70,7 +37,7 @@ public function testHeaderRowLoad($filePath) {
 }
 
 /**
- * @dataProvider data_randomFilePath
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
  */
 public function testGetSingleRow($filePath) {
 	$rows = TestHelper::createCsv($filePath);
@@ -92,7 +59,7 @@ public function testGetSingleRow($filePath) {
 }
 
 /**
- * @dataProvider data_randomFilePath
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
  */
 public function testIterator($filePath) {
 	$originalRows = TestHelper::createCsv($filePath, 10);
@@ -115,7 +82,7 @@ public function testIterator($filePath) {
 }
 
 /**
- * @dataProvider data_randomFilePath
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
  */
 public function testGetIncrements($filePath) {
 	$originalRows = TestHelper::createCsv($filePath, 10);
@@ -136,7 +103,7 @@ public function testGetIncrements($filePath) {
 }
 
 /**
- * @dataProvider data_randomFilePath
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
  */
 public function testGetAllByField($filePath) {
 	$originalRows = TestHelper::createCsv($filePath);
@@ -145,7 +112,7 @@ public function testGetAllByField($filePath) {
 
 	$result = $csv->getAllBy("gender", "M");
 
-	$filteredRows = array_filter($originalRows, function($row) use ($headers) {
+	$filteredRows = array_filter($originalRows, function($row) use($headers) {
 		$genderFieldNum = array_search("gender", $headers);
 		return $row[$genderFieldNum] === "M";
 	});
@@ -154,37 +121,6 @@ public function testGetAllByField($filePath) {
 		$rowWithHeaders = $csv->buildRow($row);
 		$this->assertContains($rowWithHeaders, $result);
 	}
-}
-
-/**
- * @dataProvider data_randomFilePath
- */
-public function testGetAllByFieldThatDoesNotExist($filePath) {
-	TestHelper::createCsv($filePath);
-	$csv = new Csv($filePath);
-	$result = $csv->getAllBy("this-field-does-not-exist", "it's true!");
-	$this->assertEmpty($result);
-}
-
-/**
- * @dataProvider data_randomFilePath
- */
-public function testGetByField($filePath) {
-	$originalRows = TestHelper::createCsv($filePath);
-	$headers = array_shift($originalRows);
-	$csv = new Csv($filePath);
-
-	$result = $csv->getBy("gender", "F");
-
-	$filteredRows = array_filter($originalRows, function($row) use ($headers) {
-		$genderFieldNum = array_search("gender", $headers);
-		return $row[$genderFieldNum] === "M";
-	});
-
-	$originalSource = $originalRows[$result["rowNum"]];
-	$rowWithHeaders = $csv->buildRow($originalSource);
-
-	$this->assertEquals($rowWithHeaders, $result);
 }
 
 }#

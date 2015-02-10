@@ -7,6 +7,8 @@ namespace g105b\phpcsv;
 
 class TestHelper {
 
+const RANDOM_TEST_COUNT = 10;
+
 private static $headers = [
 	"firstName",
 	"lastName",
@@ -18,6 +20,40 @@ private static $headers = [
 private static $nameLength = [4, 10];
 private static $characterList = ["aeiou", "bcdfghjklmnprstuvwyz"];
 private static $recordRandomLength = [10, 1000];
+
+/**
+ * Gets the temporary path to the directory used by test files.
+ *
+ * @return string Absolute file path to directory
+ */
+public static function getTempPath() {
+	return sys_get_temp_dir() . "/g105b-phpcsv";
+}
+
+/**
+ * Returns an array of randomised filepaths to CSV files within nested temp
+ * directories.
+ */
+public static function data_randomFilePath() {
+	$filePathArray = [];
+
+	$nesting = 3;
+
+	$basePath = self::getTempPath();
+
+	for($i = 0; $i < self::RANDOM_TEST_COUNT; $i++) {
+		$path = $basePath;
+
+		for($nestLevel = 0; $nestLevel < $nesting; $nestLevel++) {
+			$path .= "/" . uniqid("dir");
+			$file = "/" . uniqid("file") . ".csv";
+			$filePathArray []= [$path . $file];
+		}
+	}
+
+	return $filePathArray;
+}
+
 /**
  * Creates a CSV file at the provided path and fills it with random data.
  *

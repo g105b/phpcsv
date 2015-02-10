@@ -16,6 +16,7 @@ class Csv {
 private $file;
 private $filePath;
 private $headers;
+private $idField = "ID";
 
 public function __construct($filePath) {
 	$this->filePath = $filePath;
@@ -40,6 +41,16 @@ private function saveHeaders() {
 }
 
 /**
+ * Retrieves an array of the CSV file headers, in the order they appear in the
+ * file.
+ *
+ * @return array Indexed array of header names
+ */
+public function getHeaders() {
+	return $this->headers;
+}
+
+/**
  * Converts an indexed array of data into an associative array with field names.
  *
  * @param array $data Indexed array of data representing row
@@ -58,16 +69,6 @@ public function buildRow($data) {
 
 public function getFilePath() {
 	return $this->filePath;
-}
-
-/**
- * Returns an indexed array of headers in the CSV, in the same order as their
- * columns are stored.
- *
- * @return array An array with an element for each header column
- */
-public function getHeaders() {
-	return $this->headers;
 }
 
 /**
@@ -118,7 +119,7 @@ $fetchFields = [], $count = 0) {
 	while(false !== ($row = $this->get())
 	&& ($count === 0 || count($result) < $count)) {
 		if(!isset($row[$fieldName])) {
-			continue;
+			throw new InvalidFieldException($fieldName);
 		}
 		if($row[$fieldName] == $fieldValue) {
 			$result []= $row;
@@ -142,6 +143,41 @@ $fetchFields = [], $count = 0) {
 public function getBy($fieldName, $fieldValue, $fetchFields = []) {
 	$result = $this->getAllBy($fieldName, $fieldValue, $fetchFields, 1);
 	return $result[0];
+}
+
+/**
+ * Sets the interal field used for ID.
+ *
+ * @param string $idField Name of field (must be within $this->headers)
+ *
+ * @return string The successfully-set ID field
+ */
+public function setIdField($idField) {
+	if(!in_array($idField, $this->headers)) {
+		throw new InvalidFieldException($idField);
+	}
+
+	$this->idField = $idField;
+	return $idField;
+}
+
+/**
+ * Retrieves the internally set field used for ID. By default, this is "ID",
+ * but if there is no field with that name then this function returns null.
+ *
+ * @return string|null Name of field, or null if the default field does not
+ * exist in the CSV
+ */
+public function getIdField() {
+	if(!in_array($this->idField, $this->headers)) {
+		return null;
+	}
+
+	return $this->idField;
+}
+
+public function getById() {
+
 }
 
 }#
