@@ -27,26 +27,26 @@ public function testGetAllByFieldThatDoesNotExist($filePath) {
 	$csv->getAllBy("this-field-does-not-exist", "it's true!");
 }
 
-// /**
-//  * @dataProvider data_randomFilePath
-//  */
-// public function testGetByField($filePath) {
-// 	$originalRows = TestHelper::createCsv($filePath);
-// 	$headers = array_shift($originalRows);
-// 	$csv = new Csv($filePath);
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testGetByField($filePath) {
+	$originalRows = TestHelper::createCsv($filePath);
+	$headers = array_shift($originalRows);
+	$csv = new Csv($filePath);
 
-// 	$result = $csv->getBy("gender", "F");
+	$result = $csv->getBy("gender", "F");
 
-// 	$filteredRows = array_filter($originalRows, function($row) use($headers) {
-// 		$genderFieldNum = array_search("gender", $headers);
-// 		return $row[$genderFieldNum] === "M";
-// 	});
+	$filteredRows = array_filter($originalRows, function($row) use($headers) {
+		$genderFieldNum = array_search("gender", $headers);
+		return $row[$genderFieldNum] === "M";
+	});
 
-// 	$originalSource = $originalRows[$result["rowNum"]];
-// 	$rowWithHeaders = $csv->buildRow($originalSource);
+	$originalSource = $originalRows[$result["rowNum"]];
+	$rowWithHeaders = $csv->buildRow($originalSource);
 
-// 	$this->assertEquals($rowWithHeaders, $result);
-// }
+	$this->assertEquals($rowWithHeaders, $result);
+}
 
 // /**
 //  * @dataProvider data_randomFilePath
