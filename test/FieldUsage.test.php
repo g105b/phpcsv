@@ -73,28 +73,28 @@ public function testGetInvalidDefaultIdField($filePath) {
 	$csv->setIdField($id);
 }
 
-// /**
-//  * @dataProvider data_randomFilePath
-//  */
-// public function testGetById($fieldPath) {
-// 	$originalRows = TestHelper::createCsv($filePath);
-// 	$headers = array_shift($originalRows);
-// 	$csv = new Csv($filePath);
+/**
+ * @dataProvider data_randomFilePath
+ */
+public function testGetById($fieldPath) {
+	$originalRows = TestHelper::createCsv($filePath);
+	$headers = array_shift($originalRows);
+	$csv = new Csv($filePath);
 
-// 	$id = "rowNum";
-// 	$rowToCheck = rand(0, count($originalRows) - 1);
+	$id = "rowNum";
+	$rowToCheck = rand(0, count($originalRows) - 1);
 
-// 	$csv->setIdField($id);
-// 	$result = $csv->getById($rowToCheck);
+	$csv->setIdField($id);
+	$result = $csv->getById($rowToCheck);
 
-// 	$filteredRows = array_filter($originalRows, function($row)
-// 	use($headers, $rowToCheck, $id) {
-// 		$rowNumFieldNum = array_search($id, $headers);
-// 		return $row[$rowNumFieldNum] == $id;
-// 	});
+	$filteredRows = array_filter($originalRows, function($row)
+	use($headers, $rowToCheck, $id) {
+		$rowNumFieldNum = array_search($id, $headers);
+		return $row[$rowNumFieldNum] == $id;
+	});
 
-// 	$this->assertCount(1, $filteredRows, 'There should only be one of the ID');
-// 	$this->assertEquals($filteredRows[0], $result);
-// }
+	$this->assertCount(1, $filteredRows, 'There should only be one of the ID');
+	$this->assertEquals($filteredRows[0], $result);
+}
 
 }#
