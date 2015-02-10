@@ -61,16 +61,17 @@ public function testGetSetIdField($filePath) {
 	$this->assertEquals($id, $csv->getIdField());
 }
 
-// /**
-//  * @dataProvider data_randomFilePath
-//  */
-// public function testGetInvalidDefaultIdField($filePath) {
-// 	$originalRows = TestHelper::createCsv($filePath, 10);
-// 	$csv = new Csv($filePath);
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ * @expectedException \g105b\phpcsv\InvalidFieldException
+ */
+public function testGetInvalidDefaultIdField($filePath) {
+	$originalRows = TestHelper::createCsv($filePath, 10);
+	$csv = new Csv($filePath);
 
-// 	$id = "this-field-does-not-exist";
-// 	$csv->setIdField($id);
-// }
+	$id = "this-field-does-not-exist";
+	$csv->setIdField($id);
+}
 
 // /**
 //  * @dataProvider data_randomFilePath
