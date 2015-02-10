@@ -63,6 +63,17 @@ public function testGetSetIdField($filePath) {
 
 /**
  * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testGetIdFieldWhenNotSet($filePath) {
+	$originalRows = TestHelper::createCsv($filePath, 10);
+	$csv = new Csv($filePath);
+
+	// We know that the "ID" column is not existant within the CSV data, instead
+	// the ID field is "rowNum"; getting the ID field should return null.
+	$this->assertNull($csv->getIdField());
+}
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
  * @expectedException \g105b\phpcsv\InvalidFieldException
  */
 public function testGetInvalidDefaultIdField($filePath) {
@@ -74,9 +85,9 @@ public function testGetInvalidDefaultIdField($filePath) {
 }
 
 /**
- * @dataProvider data_randomFilePath
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
  */
-public function testGetById($fieldPath) {
+public function testGetById($filePath) {
 	$originalRows = TestHelper::createCsv($filePath);
 	$headers = array_shift($originalRows);
 	$csv = new Csv($filePath);

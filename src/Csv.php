@@ -176,8 +176,18 @@ public function getIdField() {
 	return $this->idField;
 }
 
-public function getById() {
-
+/**
+ * Retrieves the first record with the currently set ID field (there should only
+ * be one if the data source is used correctly).
+ *
+ * @param string $idValue Value of the ID field to search for
+ * @param array $fetchFields List of fields to include
+ *
+ * @return array Associative array of first matching row, or null if no match
+ * found
+ */
+public function getById($idValue, $fetchFields = []) {
+	return $this->getBy($this->idField, $idValue);
 }
 
 }#
