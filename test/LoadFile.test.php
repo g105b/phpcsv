@@ -116,7 +116,7 @@ public function testGetAllByField($filePath) {
 	});
 
 	foreach ($filteredRows as $i => $row) {
-		$rowWithHeaders = $csv->buildRow($row);
+		$rowWithHeaders = $csv->toAssociative($row);
 		$this->assertContains($rowWithHeaders, $result);
 	}
 }

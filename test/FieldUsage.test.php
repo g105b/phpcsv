@@ -40,7 +40,7 @@ public function testGetByField($filePath) {
 	});
 
 	$originalSource = $originalRows[$result["rowNum"]];
-	$rowWithHeaders = $csv->buildRow($originalSource);
+	$rowWithHeaders = $csv->toAssociative($originalSource);
 
 	$this->assertEquals($rowWithHeaders, $result);
 }
@@ -102,7 +102,7 @@ public function testGetById($filePath) {
 	});
 	// Reset the indices of the filtered array:
 	$filteredRows = array_values($filteredRows);
-	$expectedResult = $csv->buildRow($filteredRows[0]);
+	$expectedResult = $csv->toAssociative($filteredRows[0]);
 
 	$this->assertCount(1, $filteredRows, 'There should only be one of the ID');
 	$this->assertEquals($expectedResult, $result);
