@@ -10,7 +10,7 @@ namespace g105b\phpcsv;
 
 use \SplFileObject as File;
 
-class Csv {
+class Csv implements \Iterator {
 
 private $file;
 private $filePath;
@@ -36,6 +36,26 @@ public function __construct($filePath) {
 		File::DROP_NEW_LINE
 	);
 	$this->saveHeaders();
+}
+
+public function current() {
+
+}
+
+public function key() {
+
+}
+
+public function next() {
+
+}
+
+public function rewind() {
+
+}
+
+public function valid() {
+
 }
 
 /**
