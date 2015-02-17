@@ -39,23 +39,23 @@ public function __construct($filePath) {
 }
 
 public function current() {
-
+	return $this->file->current();
 }
 
 public function key() {
-
+	return $this->file->key();
 }
 
 public function next() {
-
+	$this->file->next();
 }
 
 public function rewind() {
-
+	$this->saveHeaders();
 }
 
 public function valid() {
-
+	return $this->file->valid();
 }
 
 /**
@@ -64,7 +64,11 @@ public function valid() {
  */
 private function saveHeaders() {
 	$this->file->rewind();
-	$this->headers = $this->file->current();
+	$headers = $this->file->current();
+	if(!empty($headers)) {
+		$this->headers = $headers;
+	}
+
 	$this->file->next();
 }
 
