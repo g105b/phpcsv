@@ -20,7 +20,16 @@ private $idField = "ID";
 
 public function __construct($filePath) {
 	$this->filePath = $filePath;
-	$this->file = new File($filePath);
+
+	if(!file_exists($filePath)) {
+		if(!is_dir(dirname($filePath)) ) {
+			mkdir(dirname($filePath), 0775, true);
+		}
+
+		touch($filePath);
+	}
+
+	$this->file = new File($filePath, "r+");
 	$this->file->setFlags(
 		File::READ_CSV |
 		File::READ_AHEAD |
@@ -57,11 +66,29 @@ public function getHeaders() {
  *
  * @return array Associative array of data with field names
  */
-public function buildRow($data) {
+public function toAssociative($data) {
 	foreach ($data as $i => $value) {
 		$headerName = $this->headers[$i];
 		$data[$headerName] = $value;
 		unset($data[$i]);
+	}
+
+	return $data;
+}
+
+/**
+ * Converts an associative array into an indexed array, according to the
+ * currently stored headers.
+ *
+ * @param array $data Associative array of data representing row
+ *
+ * @return array Indexed array of data in order of columns
+ */
+public function toIndexed($data) {
+	foreach ($data as $key => $value) {
+		$headerIndex = (int)array_search($value, $this->headers);
+		$data[$headerIndex] = $value;
+		unset($data[$key]);
 	}
 
 	return $data;
@@ -97,7 +124,7 @@ public function get($index = null, $fetchFields = []) {
 	$data = $this->file->current();
 	$this->file->next();
 
-	$row = $this->buildRow($data);
+	$row = $this->toAssociative($data);
 	return $row;
 }
 
@@ -188,6 +215,52 @@ public function getIdField() {
  */
 public function getById($idValue, $fetchFields = []) {
 	return $this->getBy($this->idField, $idValue);
+}
+
+/**
+ * Adds a single row to the CSV file, the values according to associative
+ * array keys matching the currently stored headers. If there are no headers
+ * stored, the headers will take the form of the current associative array's
+ * keys, in the order they exist in the array.
+ *
+ * @param array $row Associative array containing key-value pairs. Alternatively
+ * an indexed array can be passed in, which will be converted into an
+ * associative array from the stored headers
+ *
+ * @return array Returns the added row in associative form
+ */
+public function add($row) {
+	$rowColumns = $row;
+	$rowAssociative = $row;
+
+	if($this->isAssoc($row)) {
+		if(!$this->headers) {
+			$this->headers = array_keys($row);
+		}
+		$rowColumns = $this->toIndexed($row);
+	}
+	else {
+		$rowAssociative = $this->toAssociative($row);
+	}
+
+	if(!$this->headers) {
+		throw new HeadersNotSetException();
+	}
+
+	$this->file->fputcsv($rowColumns);
+	return $rowAssociative;
+}
+
+/**
+ * Checks whether a given array is associative or indexed.
+ *
+ * @param array $array The input array to check
+ *
+ * @return bool True if input array is associative, false if the input array is
+ * indexed
+ */
+private function isAssoc($array) {
+	return array_keys($array) !== range(0, count($array) - 1);
 }
 
 }#
