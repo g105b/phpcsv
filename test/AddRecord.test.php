@@ -75,4 +75,13 @@ public function testCsvSetsData($filePath) {
 	}
 }
 
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ * @expectedException \g105b\phpcsv\HeadersNotSetException
+ */
+public function testCsvThrowsErrorWithNoHeaders($filePath) {
+	$csv = new Csv($filePath);
+	$csv->add(["Alan", "Statham", "Consultant Radiologist"]);
+}
+
 }#
