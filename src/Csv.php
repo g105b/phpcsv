@@ -272,6 +272,7 @@ public function add($row) {
 	}
 
 	$this->file->fputcsv($rowColumns);
+	$this->file->fflush();
 	return $rowAssociative;
 }
 
