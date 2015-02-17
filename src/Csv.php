@@ -236,6 +236,7 @@ public function add($row) {
 	if($this->isAssoc($row)) {
 		if(!$this->headers) {
 			$this->headers = array_keys($row);
+			$this->file->fputcsv($this->headers);
 		}
 		$rowColumns = $this->toIndexed($row);
 	}

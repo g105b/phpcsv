@@ -84,4 +84,22 @@ public function testCsvThrowsErrorWithNoHeaders($filePath) {
 	$csv->add(["Alan", "Statham", "Consultant Radiologist"]);
 }
 
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testCsvAddsIndexedRowsAfterAssociative($filePath) {
+	$csv = new Csv($filePath);
+	$csv->add([
+		"firstName" => "Alan",
+		"lastName" => "Statham",
+		"Job Title" => "Consultant Radiologist"
+	]);
+
+	$csv->add(["Caroline", "Todd", "Surgical Registrar"]);
+	$csv->add(["Guy", "Secretan", "Anaesthetist"]);
+
+	$lines = file($filePath);
+	$this->assertCount(4, $lines, 'Should have three lines plus the header');
+}
+
 }#
