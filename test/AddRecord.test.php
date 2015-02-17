@@ -105,16 +105,16 @@ public function testCsvAddsIndexedRowsAfterAssociative($filePath) {
 /**
  * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
  */
-public function testCsvIteratesAfterAdding($filePath) {
-	$csv = new Csv($filePath);
-	foreach ($this->details as $rowDetail) {
-		$csv->add($rowDetail);
-	}
+// public function testCsvIteratesAfterAdding($filePath) {
+// 	$csv = new Csv($filePath);
+// 	foreach ($this->details as $rowDetail) {
+// 		$csv->add($rowDetail);
+// 	}
 
-	foreach ($csv as $rowNumber => $row) {
-		var_dump($rowNumber, $row);
-	}
-	// die();
-}
+// 	foreach ($csv as $rowNumber => $row) {
+// 		var_dump($rowNumber, $row);
+// 	}
+// 	// die();
+// }
 
 }#

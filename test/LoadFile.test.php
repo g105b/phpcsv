@@ -61,20 +61,26 @@ public function testGetSingleRow($filePath) {
  */
 public function testIterator($filePath) {
 	$originalRows = TestHelper::createCsv($filePath, 10);
+	$headers = array_shift($originalRows);
 	$csv = new Csv($filePath);
 
 	foreach ($csv as $rowNumber => $row) {
 		foreach ($row as $fieldName => $value) {
-			$fieldIndex = array_search($fieldName, $originalRows[0]);
-			$this->assertEquals($value, $originalRows[$rowNumber][$fieldIndex]);
+			$fieldIndex = array_search($fieldName, $headers);
+			$this->assertEquals(
+				$value,
+				$originalRows[$rowNumber - 1][$fieldIndex]
+			);
 		}
 	}
 
-	// Do it again to check that pointer is reset.
 	foreach ($csv as $rowNumber => $row) {
 		foreach ($row as $fieldName => $value) {
-			$fieldIndex = array_search($fieldName, $originalRows[0]);
-			$this->assertEquals($value, $originalRows[$rowNumber][$fieldIndex]);
+			$fieldIndex = array_search($fieldName, $headers);
+			$this->assertEquals(
+				$value,
+				$originalRows[$rowNumber - 1][$fieldIndex]
+			);
 		}
 	}
 }

@@ -39,7 +39,7 @@ public function __construct($filePath) {
 }
 
 public function current() {
-	return $this->file->current();
+	return $this->toAssociative($this->file->current());
 }
 
 public function key() {
