@@ -9,7 +9,6 @@
 namespace g105b\phpcsv;
 
 use \SplFileObject as File;
-// use \SplTempFileObject as Temp;
 
 class Csv {
 
