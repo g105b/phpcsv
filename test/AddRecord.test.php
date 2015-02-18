@@ -105,6 +105,35 @@ public function testCsvAddsIndexedRowsAfterAssociative($filePath) {
 /**
  * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
  */
+public function testCsvAddsCorrectNumberOfColumns($filePath) {
+	$csv = new Csv($filePath);
+	foreach ($this->details as $rowDetail) {
+		$csv->add($rowDetail);
+	}
+
+	$lines = file($filePath);
+	foreach ($lines as $line) {
+		$numberOfCommas = substr_count($line, ",");
+		$this->assertEquals(count($this->details[0]) - 1, $numberOfCommas);
+	}
+}
+
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testCsvGetsAfterAdding($filePath) {
+	$csv = new Csv($filePath);
+	foreach ($this->details as $rowDetail) {
+		$csv->add($rowDetail);
+	}
+
+	$microsoftRows = $csv->getAllBy("Company", "Microsoft");
+	var_dump($microsoftRows);die();
+}
+
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
 public function testCsvIteratesAfterAdding($filePath) {
 	$csv = new Csv($filePath);
 	foreach ($this->details as $rowDetail) {
