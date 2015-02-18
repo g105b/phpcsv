@@ -150,7 +150,8 @@ public function testCsvIteratesAfterAdding($filePath) {
 	}
 
 	foreach ($csv as $rowNumber => $row) {
-		$this->assertEquals($this->details[$rowNumber], $row);
+		// Row number starts at 1 (ignoring header row).
+		$this->assertEquals($this->details[$rowNumber - 1], $row);
 	}
 }
 
