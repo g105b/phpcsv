@@ -8,7 +8,7 @@
  */
 namespace g105b\phpcsv;
 
-class FieldUsage_Test extends \PHPUnit_Framework_TestCase {
+class RetrieveRecord_Test extends \PHPUnit_Framework_TestCase {
 
 public function tearDown() {
 	TestHelper::removeDir(TestHelper::getTempPath());
