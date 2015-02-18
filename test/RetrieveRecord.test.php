@@ -16,6 +16,18 @@ public function tearDown() {
 
 /**
  * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testGetDoesNotGiveHeaderRow($filePath) {
+	TestHelper::createCsv($filePath);
+	$csv = new Csv($filePath);
+	$headers = $csv->getHeaders();
+	$firstRow = $csv->get(0);
+
+	$this->assertNotEquals($headers, $firstRow);
+}
+
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
  * @expectedException \g105b\phpcsv\InvalidFieldException
  */
 public function testGetAllByFieldThatDoesNotExist($filePath) {
