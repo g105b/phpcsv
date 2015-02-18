@@ -10,7 +10,7 @@ namespace g105b\phpcsv;
 
 class AddRecord_Test extends \PHPUnit_Framework_TestCase {
 
-private $details = [
+private $details = [ // Just some example tabular data...
 	[
 		"Company" 	=> "Microsoft",
 		"OS" 		=> "Windows",
