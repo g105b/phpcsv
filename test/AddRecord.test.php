@@ -128,7 +128,16 @@ public function testCsvGetsAfterAdding($filePath) {
 	}
 
 	$microsoftRows = $csv->getAllBy("Company", "Microsoft");
-	var_dump($microsoftRows);die();
+	$count = 0;
+	foreach ($this->details as $rowDetail) {
+		if($rowDetail["Company"] === "Microsoft") {
+			$count++;
+
+			$this->assertContains($rowDetail, $microsoftRows);
+		}
+	}
+
+	$this->assertCount($count, $microsoftRows);
 }
 
 /**
