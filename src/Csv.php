@@ -292,4 +292,16 @@ private function isAssoc($array) {
 	return array_keys($array) !== range(0, count($array) - 1);
 }
 
+/**
+ * Update a row's contents by matching ID field.
+ *
+ * @param array $row Associative array representing row. Must contain ID field
+ * as a key
+ *
+ * @return array The updated row
+ */
+private function update($row) {
+
+}
+
 }#
