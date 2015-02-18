@@ -28,6 +28,22 @@ public function testGetDoesNotGiveHeaderRow($filePath) {
 
 /**
  * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testGetCalledTwiceRetrievesCorrectRows($filePath) {
+	TestHelper::createCsv($filePath);
+	$csv = new Csv($filePath);
+	$row0 = $csv->get(0);
+	$row5 = $csv->get(5);
+
+	$this->assertNotEquals($row5, $row0);
+
+	$row0again = $csv->get(0);
+
+	$this->assertEquals($row0again, $row0);
+}
+
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
  * @expectedException \g105b\phpcsv\InvalidFieldException
  */
 public function testGetAllByFieldThatDoesNotExist($filePath) {
