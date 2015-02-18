@@ -20,7 +20,6 @@ Wraps SplFileObject's CSV capabilities with a more human approach
 
 ## Todo list
 
-* Write capability (v2)
 * Requesting only certain fields in result (v2)
 * Type handling (v3)
 * Sorting (v4)
