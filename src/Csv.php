@@ -109,7 +109,7 @@ public function toAssociative($data) {
  */
 public function toIndexed($data) {
 	foreach ($data as $key => $value) {
-		$headerIndex = (int)array_search($value, $this->headers);
+		$headerIndex = (int)array_search($key, $this->headers);
 		$data[$headerIndex] = $value;
 		unset($data[$key]);
 	}
