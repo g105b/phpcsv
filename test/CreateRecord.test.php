@@ -1,6 +1,6 @@
 <?php
 /**
- * Tests the manipulation of CSV fields is performed as expected.
+ * Tests the creation of CSV rows is performed as expected.
  *
  * http://github.com/g105b/phpcsv
  * @copyright Copyright Ⓒ 2015 Bright Flair Ltd. (http://brightflair.com)
@@ -8,7 +8,7 @@
  */
 namespace g105b\phpcsv;
 
-class AddRecord_Test extends \PHPUnit_Framework_TestCase {
+class CreateRecord_Test extends \PHPUnit_Framework_TestCase {
 
 private $details = [ // Just some example tabular data...
 	[
