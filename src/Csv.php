@@ -136,6 +136,10 @@ public function get($index = null, $fetchFields = []) {
 		$index = $this->file->key() - 1;
 	}
 
+	if($index < $this->file->key()) {
+		$this->file->rewind();
+	}
+
 	while($index >= $this->file->key()) {
 		$this->file->next();
 	}

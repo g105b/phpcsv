@@ -9,4 +9,18 @@
 namespace g105b\phpcsv;
 
 class UpdateRecord_Test extends \PHPUnit_Framework_TestCase {
+
+public function tearDown() {
+	TestHelper::removeDir(TestHelper::getTempPath());
+}
+
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testUpdateSingleField($filePath) {
+	TestHelper::createCsv($filePath);
+	$csv = new Csv($filePath);
+	$firstRow = $csv->get(0);
+}
+
 }#
