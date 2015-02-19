@@ -384,6 +384,7 @@ public function deleteRow($rowNumber) {
 
 	$temp->rewind();
 	$this->file->ftruncate(0);
+	$this->file->fputcsv($this->headers);
 	$rowNumber = 0;
 	foreach ($temp as $rowNumber => $row) {
 		if(in_array($rowNumber - 1, $rowNumberArray)) {
