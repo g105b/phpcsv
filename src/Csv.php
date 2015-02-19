@@ -28,6 +28,10 @@ public function __construct($filePath) {
 		touch($filePath);
 	}
 
+	if(is_dir($filePath)) {
+		throw new InvalidPathException($filePath);
+	}
+
 	$this->file = new File($filePath, "r+");
 	$this->file->setFlags(
 		File::READ_CSV |

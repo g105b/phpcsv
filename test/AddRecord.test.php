@@ -155,4 +155,14 @@ public function testCsvIteratesAfterAdding($filePath) {
 	}
 }
 
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ * @expectedException \g105b\phpcsv\InvalidPathException
+ */
+public function testConstructsWithDirectory($filePath) {
+	TestHelper::createCsv($filePath, 1);
+	$filePath = dirname($filePath);
+	$csv = new Csv($filePath);
+}
+
 }#
