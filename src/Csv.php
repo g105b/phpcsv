@@ -317,8 +317,7 @@ private function isAssoc($array) {
  * @param array $row Associative array representing row. Must contain ID field
  * as a key
  *
- * @return array|boolean The updated row, or false if the supplied data does
- * not match an existing row
+ * @return boolean True if any changes were made, otherwise false
  */
 public function update($data) {
 	if(!isset($data[$this->idField])) {
@@ -331,16 +330,11 @@ public function update($data) {
 
 	foreach ($this->file as $rowNumber => $row) {
 		if($row[$idColumn] != $data[$this->idField]) {
-			// The file pointer position is at the end of the current row.
-			$lastPos = $this->file->ftell();
 			continue;
 		}
 
-		$pos = $this->deleteRow($rowNumber);
-		$this->file->seek($pos);
-		$this->file->fputcsv($data);
-		$this->file->rewind();
-		return $data;
+		// $rowNumber is 1-based, but updateRow needs 0-based index.
+		return $this->updateRow($rowNumber - 1, $data);
 	}
 
 	return false;
@@ -353,9 +347,25 @@ public function update($data) {
  * @param int|array $rowNumber The integer row number to remove, or an array of
  * integers to remove multiple rows
  *
- * @return int Byte position of the start of the last-deleted row
+ * @return boolean True if any changes were made, otherwise false
  */
 public function deleteRow($rowNumber) {
+	return $this->updateRow($rowNumber, null);
+}
+
+/**
+ * Removes a row from the CSV file by streaming to a temporary file, ignoring
+ * the specified line number(s).
+ *
+ * @param int|array $rowNumber The zero-based integer row number to remove,
+ * or an array of integers to remove multiple rows (row 0 is header row)
+ * @param mixed $replaceWith The row data to replace with, or null to just
+ * remove to original row
+ *
+ * @return boolean True if any changes were made, otherwise false
+ */
+public function updateRow($rowNumber, $replaceWith) {
+	$changed = false;
 	$rowNumberArray = [];
 
 	// Ensure we are working with an array.
@@ -374,7 +384,6 @@ public function deleteRow($rowNumber) {
 		File::DROP_NEW_LINE
 	);
 
-	$pos = $this->file->ftell();
 	$this->file->fseek(0);
 
 	// Copy contents of file into temp:
@@ -388,14 +397,25 @@ public function deleteRow($rowNumber) {
 	$rowNumber = 0;
 	foreach ($temp as $rowNumber => $row) {
 		if(in_array($rowNumber - 1, $rowNumberArray)) {
-			// Current row is to be deleted. Do not write back to file.
+			// Current row is to be updated or deleted. Do not write original
+			// row back to file.
+			if(!is_null($replaceWith)) {
+				// Ensure that $replaceWidth is an indexed array.
+				if($this->isAssoc($replaceWith)) {
+					$replaceWith = $this->toIndexed($replaceWith);
+				}
+				$this->file->fputcsv($replaceWith);
+			}
+			$changed = true;
 			continue;
 		}
 
 		$this->file->fputcsv($row);
 	}
 
-	return $pos;
+	$this->file->fflush();
+
+	return $changed;
 }
 
 }#

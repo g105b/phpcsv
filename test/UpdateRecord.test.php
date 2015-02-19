@@ -27,10 +27,9 @@ public function testUpdateSingleField($filePath) {
 	$row = $csv->get(0);
 	$row["firstName"] = $newFirstName;
 
-	$csv->update($row);
+	$updated = $csv->update($row);
+	$this->assertTrue($updated);
 
-	$csv = null;
-	$csv = new Csv($filePath);
 	$row = $csv->get(0);
 	$this->assertEquals($newFirstName, $row["firstName"]);
 }
