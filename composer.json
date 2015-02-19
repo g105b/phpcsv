@@ -1,9 +1,11 @@
 {
 	"name": "g105b/phpcsv",
+	"description": "Wraps SplFileObject's CSV capabilities with a more human approach",
 	"type": "library",
-	"keywords": ["csv", "import", "export",
+	"keywords": ["csv", "import", "export", "database",
 		"read", "write", "filter", "iterate"],
 	"license": "MIT",
+	"prefer-stable": true,
 	"autoload": {
 		"psr-4": {
 			"g105b\\phpcsv\\": "src"
