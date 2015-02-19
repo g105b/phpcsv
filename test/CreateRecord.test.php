@@ -197,4 +197,27 @@ public function testConstructsWithDirectory($filePath) {
 	$csv = new Csv($filePath);
 }
 
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testAddingEmptyCell($filePath) {
+	$csv = new Csv($filePath);
+	$csv->add([
+		"firstName" => "Alan",
+		"lastName" => "Statham",
+		"Job Title" => "Consultant Radiologist",
+	]);
+	$csv->add([
+		"firstName" => "", // Job not yet filled ...
+		"lastName" => "", // ... she must be late.
+		"Job Title" => "Surgical Registrar",
+	]);
+
+	$row = $csv->get(1);
+	$this->assertInternalType("array", $row);
+	$this->assertCount(3, $row);
+	$this->assertEmpty($row["firstName"]);
+	$this->assertEquals("Surgical Registrar", $row["Job Title"]);
+}
+
 }#
