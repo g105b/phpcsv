@@ -155,4 +155,28 @@ public function testCsvIteratesAfterAdding($filePath) {
 	}
 }
 
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testAddsEmptyCells($filePath) {
+	$csv = new Csv($filePath);
+	foreach ($this->details as $rowDetail) {
+		$rowDetailWithEmptyCell = array_merge([
+			"emptyColumn" => false
+		],
+			$rowDetail
+		);
+		$csv->add($rowDetailWithEmptyCell);
+	}
+
+	foreach ($csv as $rowNumber => $row) {
+		$this->assertEquals(
+			array_merge([
+				"emptyColumn" => ""
+			], $this->details[$rowNumber - 1]),
+			$row
+		);
+	}
+}
+
 }#

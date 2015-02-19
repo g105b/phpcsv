@@ -29,7 +29,7 @@ public function testUpdateSingleField($filePath) {
 	$updated = $csv->update($row);
 	$this->assertTrue($updated);
 
-	$row = $csv->get(0, 123);
+	$row = $csv->get(0);
 	$this->assertEquals($newFirstName, $row["firstName"]);
 }
 
