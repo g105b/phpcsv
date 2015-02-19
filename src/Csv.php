@@ -116,6 +116,10 @@ public function toAssociative($data) {
  */
 public function toIndexed($data) {
 	foreach ($data as $key => $value) {
+		if(!in_array($key, $this->headers)) {
+			throw new InvalidFieldException($key);
+		}
+
 		$headerIndex = (int)array_search($key, $this->headers);
 		$data[$headerIndex] = $value;
 		unset($data[$key]);

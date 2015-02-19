@@ -220,4 +220,23 @@ public function testAddingEmptyCell($filePath) {
 	$this->assertEquals("Surgical Registrar", $row["Job Title"]);
 }
 
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ * @expectedException \g105b\phpcsv\InvalidFieldException
+ */
+public function testAddInvalidField($filePath) {
+	$csv = new Csv($filePath);
+	$csv->add([
+		"firstName" => "Alan",
+		"lastName" => "Statham",
+		"Job Title" => "Consultant Radiologist",
+	]);
+	$csv->add([
+		"firstName" => "Caroline",
+		"lastName" => "Todd",
+		"Job Title" => "Surgical Registrar",
+		"gender" => "F",
+	]);
+}
+
 }#
