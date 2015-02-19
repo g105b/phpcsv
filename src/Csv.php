@@ -159,6 +159,22 @@ public function get($index = null, $fetchFields = []) {
 }
 
 /**
+ * Returns an array of all rows.
+ *
+ * @return array Indexed array, containing associative arrays of row data
+ */
+public function getAll() {
+	$this->file->rewind();
+
+	$data = [];
+	while(false !== $row = $this->get()) {
+		$data []= $row;
+	}
+
+	return $data;
+}
+
+/**
  * Returns a filtered array of rows matching the provided field name/value.
  *
  * @param string $fieldName Name of field to match on
@@ -350,28 +366,32 @@ public function deleteRow($rowNumber) {
 		array_push($rowNumberArray, $rowNumber);
 	}
 
-	$this->file->rewind();
-
 	$temp = new TempFile(self::TEMP_FILE_SIZE);
+	$temp->setFlags(
+		File::READ_CSV |
+		File::READ_AHEAD |
+		File::SKIP_EMPTY |
+		File::DROP_NEW_LINE
+	);
 
+	$pos = $this->file->ftell();
+	$this->file->fseek(0);
+
+	// Copy contents of file into temp:
+	while(!$this->file->eof()) {
+		$temp->fwrite($this->file->fread(1024));
+	}
+
+	$temp->rewind();
+	$this->file->ftruncate(0);
 	$rowNumber = 0;
-	$byteA = 0;
-	foreach ($this->file as $rowNumber => $row) {
-		if(in_array($rowNumber, $rowNumberArray)) {
-			// Current row is to be deleted. Do not write to temp file.
-			$byteA = $this->file->ftell();
+	foreach ($temp as $rowNumber => $row) {
+		if(in_array($rowNumber - 1, $rowNumberArray)) {
+			// Current row is to be deleted. Do not write back to file.
 			continue;
 		}
 
-		$byteCurrent = $this->file->ftell();
-		// Rewind to the start of the row.
-		$this->file->seek($byteA);
-		// Read the entire row's bytes.
-		$lineBytes = $this->file->fread($byteCurrent - $byteA);
-		// Write bytes to the temp file.
-		$temp->fwrite($lineBytes);
-		// $byteCurrent should === $byteA again (from fread)
-		$byteA = $byteCurrent;
+		$this->file->fputcsv($row);
 	}
 
 	return $pos;
