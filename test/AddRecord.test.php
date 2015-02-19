@@ -92,7 +92,7 @@ public function testCsvAddsIndexedRowsAfterAssociative($filePath) {
 	$csv->add([
 		"firstName" => "Alan",
 		"lastName" => "Statham",
-		"Job Title" => "Consultant Radiologist"
+		"Job Title" => "Consultant Radiologist",
 	]);
 
 	$csv->add(["Caroline", "Todd", "Surgical Registrar"]);
@@ -100,6 +100,38 @@ public function testCsvAddsIndexedRowsAfterAssociative($filePath) {
 
 	$lines = file($filePath);
 	$this->assertCount(4, $lines, 'Should have three lines plus the header');
+}
+
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testAssociativeArrayOrderIsNotFixed($filePath) {
+	$csv = new Csv($filePath);
+	$csv->add([
+		"firstName" => "Alan",
+		"lastName" => "Statham",
+		"Job Title" => "Consultant Radiologist",
+	]);
+
+	$csv->add([
+		"Job Title" => "Surgical Registrar",
+		"firstName" => "Caroline",
+		"lastName" => "Todd",
+	]);
+
+	$csv->add([
+		"lastName" => "Secretan",
+		"firstName" => "Guy",
+		"Job Title" => "Anaesthetist",
+	]);
+
+	foreach($csv as $row) {
+		$this->assertContains($row["firstName"], [
+			"Guy",
+			"Alan",
+			"Caroline",
+		]);
+	}
 }
 
 /**

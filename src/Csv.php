@@ -118,6 +118,8 @@ public function toIndexed($data) {
 		unset($data[$key]);
 	}
 
+	ksort($data);
+
 	return $data;
 }
 
