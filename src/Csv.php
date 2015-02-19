@@ -403,6 +403,7 @@ public function updateRow($rowNumber, $replaceWith) {
 
 	$temp->rewind();
 	$this->file->ftruncate(0);
+	$this->file->fseek(0);
 	// $this->file->fputcsv($this->headers);
 	$rowNumber = 0;
 	foreach ($temp as $rowNumber => $row) {
