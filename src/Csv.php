@@ -9,8 +9,11 @@
 namespace g105b\phpcsv;
 
 use \SplFileObject as File;
+use \SplTempFileObject as TempFile;
 
 class Csv implements \Iterator {
+
+const TEMP_FILE_SIZE = 64000000;
 
 private $file;
 private $filePath;
@@ -131,7 +134,8 @@ public function getFilePath() {
  * Returns the row at the given index, or the current file pointer position if
  * not supplied. Optionally supply the headers to retrieve, ignoring any others.
  *
- * @param null|int $index Zero-based row number
+ * @param null|int $index Zero-based row number (0 is the first row after the
+ * header row)
  * @param array $fetchFields List of fields to include in resulting rows
  *
  * @return array|bool Associative array of fields, or false if index is out
@@ -140,6 +144,10 @@ public function getFilePath() {
 public function get($index = null, $fetchFields = []) {
 	if(is_null($index)) {
 		$index = $this->file->key() - 1;
+	}
+
+	if($index < $this->file->key()) {
+		$this->file->rewind();
 	}
 
 	while($index >= $this->file->key()) {
@@ -155,6 +163,22 @@ public function get($index = null, $fetchFields = []) {
 
 	$row = $this->toAssociative($data);
 	return $row;
+}
+
+/**
+ * Returns an array of all rows.
+ *
+ * @return array Indexed array, containing associative arrays of row data
+ */
+public function getAll() {
+	$this->file->rewind();
+
+	$data = [];
+	while(false !== $row = $this->get()) {
+		$data []= $row;
+	}
+
+	return $data;
 }
 
 /**
@@ -292,6 +316,111 @@ public function add($row) {
  */
 private function isAssoc($array) {
 	return array_keys($array) !== range(0, count($array) - 1);
+}
+
+/**
+ * Update a row's contents by matching ID field.
+ *
+ * @param array $row Associative array representing row. Must contain ID field
+ * as a key
+ *
+ * @return boolean True if any changes were made, otherwise false
+ */
+public function update($data) {
+	if(!isset($data[$this->idField])) {
+		throw new InvalidFieldException(
+			"Supplied row has no ID field: "
+			. $this->idField);
+	}
+
+	$idColumn = array_search($this->idField, $this->headers);
+
+	foreach ($this->file as $rowNumber => $row) {
+		if($row[$idColumn] != $data[$this->idField]) {
+			continue;
+		}
+
+		// $rowNumber is 1-based, but updateRow needs 0-based index.
+		return $this->updateRow($rowNumber - 1, $data);
+	}
+
+	return false;
+}
+
+/**
+ * Removes a row from the CSV file by streaming to a temporary file, ignoring
+ * the specified line number(s).
+ *
+ * @param int|array $rowNumber The integer row number to remove, or an array of
+ * integers to remove multiple rows
+ *
+ * @return boolean True if any changes were made, otherwise false
+ */
+public function deleteRow($rowNumber) {
+	return $this->updateRow($rowNumber, null);
+}
+
+/**
+ * Removes a row from the CSV file by streaming to a temporary file, ignoring
+ * the specified line number(s).
+ *
+ * @param int|array $rowNumber The zero-based integer row number to remove,
+ * or an array of integers to remove multiple rows (row 0 is header row)
+ * @param mixed $replaceWith The row data to replace with, or null to just
+ * remove to original row
+ *
+ * @return boolean True if any changes were made, otherwise false
+ */
+public function updateRow($rowNumber, $replaceWith) {
+	$changed = false;
+	$rowNumberArray = [];
+
+	// Ensure we are working with an array.
+	if(is_array($rowNumber)) {
+		$rowNumberArray = $rowNumber;
+	}
+	else {
+		array_push($rowNumberArray, $rowNumber);
+	}
+
+	$temp = new TempFile(self::TEMP_FILE_SIZE);
+	$temp->setFlags(
+		File::READ_CSV |
+		File::READ_AHEAD |
+		File::SKIP_EMPTY |
+		File::DROP_NEW_LINE
+	);
+
+	$this->file->fseek(0);
+
+	// Copy contents of file into temp:
+	while(!$this->file->eof()) {
+		$temp->fwrite($this->file->fread(1024));
+	}
+
+	$temp->rewind();
+	$this->file->ftruncate(0);
+	$this->file->fseek(0);
+	$rowNumber = 0;
+	foreach ($temp as $rowNumber => $row) {
+		if(in_array($rowNumber - 1, $rowNumberArray)) {
+			// Current row is to be updated or deleted. Do not write original
+			// row back to file.
+			if(!is_null($replaceWith)) {
+				// Ensure that $replaceWidth is an indexed array.
+				if($this->isAssoc($replaceWith)) {
+					$replaceWith = $this->toIndexed($replaceWith);
+				}
+				$this->file->fputcsv($replaceWith);
+			}
+			$changed = true;
+			continue;
+		}
+
+		$this->file->fputcsv($row);
+	}
+
+	return $changed;
 }
 
 }#

@@ -2,8 +2,8 @@
 Wraps SplFileObject's CSV capabilities with a more human approach
 
 [![Build status](https://img.shields.io/circleci/project/g105b/phpcsv.svg?style=flat-square)](https://circleci.com/gh/g105b/phpcsv)
-[![Composer Version](http://img.shields.io/packagist/v/g105b/phpcsv.svg?style=flat-square)](https://packagist.org/packages/brightflair/php.gt)
-[![Download Stats](http://img.shields.io/packagist/dm/g105b/phpcsv.svg?style=flat-square)](https://packagist.org/packages/brightflair/php.gt)
+[![Composer Version](http://img.shields.io/packagist/v/g105b/phpcsv.svg?style=flat-square)](https://packagist.org/packages/g105b/phpcsv)
+[![Download Stats](http://img.shields.io/packagist/dm/g105b/phpcsv.svg?style=flat-square)](https://packagist.org/packages/g105b/phpcsv)
 
 ## Features at a glance
 
@@ -20,7 +20,6 @@ Wraps SplFileObject's CSV capabilities with a more human approach
 
 ## Todo list
 
-* Write capability (v2)
 * Requesting only certain fields in result (v2)
 * Type handling (v3)
 * Sorting (v4)
