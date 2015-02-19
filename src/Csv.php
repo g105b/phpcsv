@@ -9,8 +9,11 @@
 namespace g105b\phpcsv;
 
 use \SplFileObject as File;
+use \SplTempFileObject as TempFile;
 
 class Csv implements \Iterator {
+
+const TEMP_FILE_SIZE = 64000000;
 
 private $file;
 private $filePath;
@@ -298,10 +301,80 @@ private function isAssoc($array) {
  * @param array $row Associative array representing row. Must contain ID field
  * as a key
  *
- * @return array The updated row
+ * @return array|boolean The updated row, or false if the supplied data does
+ * not match an existing row
  */
-private function update($row) {
+public function update($data) {
+	if(!isset($data[$this->idField])) {
+		throw new InvalidFieldException(
+			"Supplied row has no ID field: "
+			. $this->idField);
+	}
 
+	$idColumn = array_search($this->idField, $this->headers);
+
+	foreach ($this->file as $rowNumber => $row) {
+		if($row[$idColumn] != $data[$this->idField]) {
+			// The file pointer position is at the end of the current row.
+			$lastPos = $this->file->ftell();
+			continue;
+		}
+
+		$pos = $this->deleteRow($rowNumber);
+		$this->file->seek($pos);
+		$this->file->fputcsv($data);
+		$this->file->rewind();
+		return $data;
+	}
+
+	return false;
+}
+
+/**
+ * Removes a row from the CSV file by streaming to a temporary file, ignoring
+ * the specified line number(s).
+ *
+ * @param int|array $rowNumber The integer row number to remove, or an array of
+ * integers to remove multiple rows
+ *
+ * @return int Byte position of the start of the last-deleted row
+ */
+public function deleteRow($rowNumber) {
+	$rowNumberArray = [];
+
+	// Ensure we are working with an array.
+	if(is_array($rowNumber)) {
+		$rowNumberArray = $rowNumber;
+	}
+	else {
+		array_push($rowNumberArray, $rowNumber);
+	}
+
+	$this->file->rewind();
+
+	$temp = new TempFile(self::TEMP_FILE_SIZE);
+
+	$rowNumber = 0;
+	$byteA = 0;
+	foreach ($this->file as $rowNumber => $row) {
+		if(in_array($rowNumber, $rowNumberArray)) {
+			// Current row is to be deleted. Do not write to temp file.
+			$byteA = $this->file->ftell();
+			continue;
+		}
+
+		$byteCurrent = $this->file->ftell();
+		// Rewind to the start of the row.
+		$this->file->seek($byteA);
+		// Read the entire row's bytes.
+		$lineBytes = $this->file->fread($byteCurrent - $byteA);
+		// Write bytes to the temp file.
+		$temp->fwrite($lineBytes);
+		// $byteCurrent should === $byteA again (from fread)
+		$byteA = $byteCurrent;
+	}
+
+	return $pos;
 }
 
 }#

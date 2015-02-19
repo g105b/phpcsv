@@ -22,6 +22,8 @@ public function testUpdateSingleField($filePath) {
 
 	TestHelper::createCsv($filePath);
 	$csv = new Csv($filePath);
+	$csv->setIdField("rowNum");
+
 	$row = $csv->get(0);
 	$row["firstName"] = $newFirstName;
 
