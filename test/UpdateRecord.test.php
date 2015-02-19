@@ -18,19 +18,18 @@ public function tearDown() {
  * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
  */
 public function testUpdateSingleField($filePath) {
-	$newFirstName = "UpdatedFirstName" . uniqid();
-
-	TestHelper::createCsv($filePath);
+	TestHelper::createCsv($filePath, 10);
 	$csv = new Csv($filePath);
 	$csv->setIdField("rowNum");
 
 	$row = $csv->get(0);
+	$newFirstName = "Updated-" . $row["firstName"];
 	$row["firstName"] = $newFirstName;
 
 	$updated = $csv->update($row);
 	$this->assertTrue($updated);
 
-	$row = $csv->get(0);
+	$row = $csv->get(0, 123);
 	$this->assertEquals($newFirstName, $row["firstName"]);
 }
 

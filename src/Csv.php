@@ -31,7 +31,16 @@ public function __construct($filePath) {
 		touch($filePath);
 	}
 
-	$this->file = new File($filePath, "r+");
+	$this->openFile();
+}
+
+private function openFile() {
+	if(!is_null($this->file)) {
+		$this->file->fflush();
+		$this->file = null;
+	}
+
+	$this->file = new File($this->filePath, "r+");
 	$this->file->setFlags(
 		File::READ_CSV |
 		File::READ_AHEAD |
@@ -128,7 +137,8 @@ public function getFilePath() {
  * Returns the row at the given index, or the current file pointer position if
  * not supplied. Optionally supply the headers to retrieve, ignoring any others.
  *
- * @param null|int $index Zero-based row number
+ * @param null|int $index Zero-based row number (0 is the first row after the
+ * header row)
  * @param array $fetchFields List of fields to include in resulting rows
  *
  * @return array|bool Associative array of fields, or false if index is out
@@ -393,7 +403,7 @@ public function updateRow($rowNumber, $replaceWith) {
 
 	$temp->rewind();
 	$this->file->ftruncate(0);
-	$this->file->fputcsv($this->headers);
+	// $this->file->fputcsv($this->headers);
 	$rowNumber = 0;
 	foreach ($temp as $rowNumber => $row) {
 		if(in_array($rowNumber - 1, $rowNumberArray)) {
@@ -412,8 +422,6 @@ public function updateRow($rowNumber, $replaceWith) {
 
 		$this->file->fputcsv($row);
 	}
-
-	$this->file->fflush();
 
 	return $changed;
 }
