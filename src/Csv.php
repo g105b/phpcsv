@@ -155,7 +155,6 @@ public function get($index = null, $fetchFields = []) {
 		$this->file->rewind();
 	}
 
-
 	while($index >= $this->file->key()) {
 		$this->file->next();
 	}

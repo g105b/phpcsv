@@ -190,7 +190,7 @@ public function testCsvIteratesAfterAdding($filePath) {
 /**
  * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
  */
-public function testAddsEmptyCells($filePath) {
+public function testAddsFalseCells($filePath) {
 	$csv = new Csv($filePath);
 	foreach ($this->details as $rowDetail) {
 		$rowDetailWithEmptyCell = array_merge([
@@ -225,7 +225,7 @@ public function testConstructsWithDirectory($filePath) {
 /**
  * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
  */
-public function testAddingEmptyCell($filePath) {
+public function testAddingEmptyFields($filePath) {
 	$csv = new Csv($filePath);
 	$csv->add([
 		"firstName" => "Alan",
