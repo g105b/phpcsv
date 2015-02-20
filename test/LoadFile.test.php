@@ -69,7 +69,7 @@ public function testIterator($filePath) {
 			$fieldIndex = array_search($fieldName, $headers);
 			$this->assertEquals(
 				$value,
-				$originalRows[$rowNumber - 1][$fieldIndex]
+				$originalRows[$rowNumber][$fieldIndex]
 			);
 		}
 	}
@@ -79,7 +79,7 @@ public function testIterator($filePath) {
 			$fieldIndex = array_search($fieldName, $headers);
 			$this->assertEquals(
 				$value,
-				$originalRows[$rowNumber - 1][$fieldIndex]
+				$originalRows[$rowNumber][$fieldIndex]
 			);
 		}
 	}

@@ -205,7 +205,7 @@ public function testAddsFalseCells($filePath) {
 		$this->assertEquals(
 			array_merge([
 				"emptyColumn" => ""
-			], $this->details[$rowNumber - 1]),
+			], $this->details[$rowNumber]),
 			$row
 		);
 	}

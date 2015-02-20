@@ -50,7 +50,7 @@ public function current() {
 }
 
 public function key() {
-	return $this->file->key();
+	return $this->file->key() - 1;
 }
 
 public function next() {
