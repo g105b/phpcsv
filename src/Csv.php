@@ -323,7 +323,15 @@ public function add($row) {
  * indexed
  */
 private function isAssoc($array) {
-	return array_keys($array) !== range(0, count($array) - 1);
+	$allIntegerKeys = true;
+	foreach ($array as $key => $value) {
+		if(!is_integer($key)) {
+			$allIntegerKeys = false;
+			break;
+		}
+	}
+
+	return $allIntegerKeys === false;
 }
 
 /**
