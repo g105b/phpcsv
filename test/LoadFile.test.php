@@ -127,4 +127,12 @@ public function testGetAllByField($filePath) {
 	}
 }
 
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testConstructWithPathToDirectory($filePath) {
+	$filePath = dirname($filePath);
+	$csv = new Csv($filePath);
+}
+
 }#

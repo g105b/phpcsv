@@ -139,7 +139,8 @@ public function getFilePath() {
  *
  * @param null|int $index Zero-based row number (0 is the first row after the
  * header row)
- * @param array $fetchFields List of fields to include in resulting rows
+ * @param array $fetchFields NOT IMPLEMENTED List of fields to include in
+ * resulting rows
  *
  * @return array|bool Associative array of fields, or false if index is out
  * of bounds
@@ -189,7 +190,8 @@ public function getAll() {
  *
  * @param string $fieldName Name of field to match on
  * @param string $fieldValue Value of field to match
- * @param array $fetchFields List of fields to include in resulting rows
+ * @param array $fetchFields NOT IMPLEMENTED List of fields to include in
+ * resulting rows
  *
  * @return array Array of associative array rows matching the given filter
  */
@@ -218,7 +220,7 @@ $fetchFields = [], $count = 0) {
  *
  * @param string $fieldName Name of field to match on
  * @param string $fieldValue Value of field to match
- * @param string $fetchFields List of fields to include
+ * @param string $fetchFields NOT IMPLEMENTED List of fields to include
  *
  * @return array|null Associative array of first matching row, or null if no
  * match found
@@ -264,7 +266,7 @@ public function getIdField() {
  * be one if the data source is used correctly).
  *
  * @param string $idValue Value of the ID field to search for
- * @param array $fetchFields List of fields to include
+ * @param array $fetchFields NOT IMPLEMENTED List of fields to include
  *
  * @return array Associative array of first matching row, or null if no match
  * found
@@ -304,6 +306,7 @@ public function add($row) {
 		throw new HeadersNotSetException();
 	}
 
+	$this->file->fseek(0, SEEK_END);
 	$this->file->fputcsv($rowColumns);
 	$this->file->fflush();
 	return $rowAssociative;
