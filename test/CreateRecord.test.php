@@ -92,7 +92,7 @@ public function testCsvAddsIndexedRowsAfterAssociative($filePath) {
 	$csv->add([
 		"firstName" => "Alan",
 		"lastName" => "Statham",
-		"Job Title" => "Consultant Radiologist"
+		"Job Title" => "Consultant Radiologist",
 	]);
 
 	$csv->add(["Caroline", "Todd", "Surgical Registrar"]);
@@ -100,6 +100,38 @@ public function testCsvAddsIndexedRowsAfterAssociative($filePath) {
 
 	$lines = file($filePath);
 	$this->assertCount(4, $lines, 'Should have three lines plus the header');
+}
+
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testAssociativeArrayOrderIsNotFixed($filePath) {
+	$csv = new Csv($filePath);
+	$csv->add([
+		"firstName" => "Alan",
+		"lastName" => "Statham",
+		"Job Title" => "Consultant Radiologist",
+	]);
+
+	$csv->add([
+		"Job Title" => "Surgical Registrar",
+		"firstName" => "Caroline",
+		"lastName" => "Todd",
+	]);
+
+	$csv->add([
+		"lastName" => "Secretan",
+		"firstName" => "Guy",
+		"Job Title" => "Anaesthetist",
+	]);
+
+	foreach($csv as $row) {
+		$this->assertContains($row["firstName"], [
+			"Guy",
+			"Alan",
+			"Caroline",
+		]);
+	}
 }
 
 /**
@@ -177,6 +209,57 @@ public function testAddsEmptyCells($filePath) {
 			$row
 		);
 	}
+}
+
+/**
+ * @expectedException \g105b\phpcsv\InvalidPathException
+ */
+public function testConstructsWithDirectory($filePath) {
+	TestHelper::createCsv($filePath, 1);
+	$filePath = dirname($filePath);
+	$csv = new Csv($filePath);
+}
+
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testAddingEmptyCell($filePath) {
+	$csv = new Csv($filePath);
+	$csv->add([
+		"firstName" => "Alan",
+		"lastName" => "Statham",
+		"Job Title" => "Consultant Radiologist",
+	]);
+	$csv->add([
+		"firstName" => "", // Job not yet filled ...
+		"lastName" => "", // ... she must be late.
+		"Job Title" => "Surgical Registrar",
+	]);
+
+	$row = $csv->get(1);
+	$this->assertInternalType("array", $row);
+	$this->assertCount(3, $row);
+	$this->assertEmpty($row["firstName"]);
+	$this->assertEquals("Surgical Registrar", $row["Job Title"]);
+}
+
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ * @expectedException \g105b\phpcsv\InvalidFieldException
+ */
+public function testAddInvalidField($filePath) {
+	$csv = new Csv($filePath);
+	$csv->add([
+		"firstName" => "Alan",
+		"lastName" => "Statham",
+		"Job Title" => "Consultant Radiologist",
+	]);
+	$csv->add([
+		"firstName" => "Caroline",
+		"lastName" => "Todd",
+		"Job Title" => "Surgical Registrar",
+		"gender" => "F",
+	]);
 }
 
 }#

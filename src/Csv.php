@@ -31,16 +31,11 @@ public function __construct($filePath) {
 		touch($filePath);
 	}
 
-	$this->openFile();
-}
-
-private function openFile() {
-	if(!is_null($this->file)) {
-		$this->file->fflush();
-		$this->file = null;
+	if(is_dir($filePath)) {
+		throw new InvalidPathException($filePath);
 	}
 
-	$this->file = new File($this->filePath, "r+");
+	$this->file = new File($filePath, "r+");
 	$this->file->setFlags(
 		File::READ_CSV |
 		File::READ_AHEAD |
@@ -121,10 +116,16 @@ public function toAssociative($data) {
  */
 public function toIndexed($data) {
 	foreach ($data as $key => $value) {
+		if(!in_array($key, $this->headers)) {
+			throw new InvalidFieldException($key);
+		}
+
 		$headerIndex = (int)array_search($key, $this->headers);
 		$data[$headerIndex] = $value;
 		unset($data[$key]);
 	}
+
+	ksort($data);
 
 	return $data;
 }
@@ -150,9 +151,10 @@ public function get($index = null, $fetchFields = []) {
 		$index = $this->file->key() - 1;
 	}
 
-	if($index < $this->file->key()) {
+	if($index <= $this->file->key()) {
 		$this->file->rewind();
 	}
+
 
 	while($index >= $this->file->key()) {
 		$this->file->next();
