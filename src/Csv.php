@@ -126,7 +126,44 @@ public function toIndexed($data) {
 	}
 
 	ksort($data);
+	$data = $this->fillMissing($data);
+	return $data;
+}
 
+/**
+ * Fills any missing keys with blank fields, or merging with an existing data
+ * set if provided.
+ *
+ * @param array $data Indexed or associative array containing row data
+ * @param array $existingData Indexed or associative array of existing data to
+ * fill in blank fields with
+ *
+ * @return array Array in the same format (indexed or associative) as the input
+ * data array, but with all keys present
+ */
+private function fillMissing($data, $existingData = []) {
+	if($this->isAssoc($data)) {
+		foreach ($this->headers as $header) {
+			if(!isset($data[$header])) {
+				$replaceWith = isset($existingData[$header])
+					? $existingData[$header]
+					: "";
+				$data[$header] = $replaceWith;
+			}
+		}
+	}
+	else {
+		end($this->headers);
+		for($i = 0, $max = key($this->headers); $i < $max; $i++) {
+			if(!isset($data[$i])) {
+				$replaceWith = isset($existingData[$i])
+					? $existingData[$i]
+					: "";
+				$data[$i] = $replaceWith;
+			}
+		}
+		ksort($data);
+	}
 	return $data;
 }
 
@@ -426,6 +463,7 @@ public function updateRow($rowNumber, $replaceWith) {
 				if($this->isAssoc($replaceWith)) {
 					$replaceWith = $this->toIndexed($replaceWith);
 				}
+				$replaceWith = $this->fillMissing($replaceWith);
 				$this->file->fputcsv($replaceWith);
 			}
 			$changed = true;
