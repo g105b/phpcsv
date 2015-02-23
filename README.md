@@ -18,7 +18,63 @@ Wraps SplFileObject's CSV capabilities with a more human approach
 
 ![Screenshot of phpcsv](https://raw.githubusercontent.com/g105b/phpcsv/master/screenshot.png)
 
-## Todo list
+## Usage
+
+Here are a few use cases to best show the functionality of the library. For a complete guide, [visit the documentation](https://github.com/g105b/phpcsv/wiki).
+
+### Add rows
+```php
+$csv = new Csv("/path/to/file.csv");
+$csv->add([
+    "firstName" => "Alan",
+    "lastName" => "Statham",
+    "Job Title" => "Consultant Radiologist",
+]);
+$csv->add([
+    "firstName" => "Caroline",
+    "lastName" => "Todd",
+    "Job Title" => "Surgical Registrar",
+]);
+```
+
+### Get rows
+```php
+$csv = new Csv("/path/to/file.csv");
+$resultRows = $csv->getAllBy("gender", "F"); // array of all matching rows.
+$firstRow = $csv->getBy("gender", "F"); // single row, first matching.
+```
+
+### Iterate over rows
+```php
+$csv = new Csv("/path/to/file.csv");
+
+foreach ($csv as $rowNumber => $row) {
+    // $row is an associative array with CSV headers as each key.
+    // $rowNumber starts from 1 (ignoring header row).
+}
+```
+
+### Update row
+```php
+$csv = new Csv("/path/to/file.csv");
+$row = $csv->getBy("email", "barack@whitehouse.gov");
+
+// Update the matching row with provided fields, keeping any
+// existing field data on the existing row.
+$csv->update($row, [
+    "dateOfBirth" => "1961-08-04",
+]);
+```
+
+### Delete row
+```php
+$csv = new Csv("/path/to/file.csv");
+
+// Delete a row by its index.
+$csv->deleteRow(22);
+```
+
+## Future feature ideas
 
 * Requesting only certain fields in result (v2)
 * Type handling (v3)
