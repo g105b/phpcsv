@@ -371,32 +371,48 @@ private function isAssoc($array) {
 }
 
 /**
- * Update a row's contents by matching ID field.
+ * Gets the row index of the first match from the provided data. Not all fields
+ * do have to be present. Will update the *first* match. If an ID field is set
+ * in the supplied data, the match will be made on the field with the ID,
+ * otherwise the first row in the CSV to match all provided fields will be used.
  *
- * @param array $row Associative array representing row. Must contain ID field
- * as a key
+ * @param array $data Associative array representing row
+ *
+ * @return int|false Index of the first matching row, or false if there is no
+ * match
+ */
+public function getRowNumber($data) {
+	// TODO: Implement.
+}
+
+/**
+ * Update the first matching row's contents. Not all fields do have to be
+ * present. Will update the *first* match. If an ID field is set in the
+ * supplied data, the match will be made on the field with the ID, otherwise
+ * the first row in the CSV to match all provided fields will be used.
+ *
+ * @param array $data Associative array representing row
  *
  * @return boolean True if any changes were made, otherwise false
  */
 public function update($data) {
-	if(!isset($data[$this->idField])) {
-		throw new InvalidFieldException(
-			"Supplied row has no ID field: "
-			. $this->idField);
-	}
+	$rowNumber = $this->getRowNumber($data);
+	return $this->updateRow($rowNumber - 1, $data);
+}
 
-	$idColumn = array_search($this->idField, $this->headers);
-
-	foreach ($this->file as $rowNumber => $row) {
-		if($row[$idColumn] != $data[$this->idField]) {
-			continue;
-		}
-
-		// $rowNumber is 1-based, but updateRow needs 0-based index.
-		return $this->updateRow($rowNumber - 1, $data);
-	}
-
-	return false;
+/**
+ * Delete the first matching row. Not all fields do have to be present. Will
+ * update the *first* match. If an ID field is set in the supplied data, the
+ * match will be made on the field with the ID, otherwise the first row in the
+ * CSV to match all provided fields will be used.
+ *
+ * @param array $data Associative array representing row
+ *
+ * @return boolean True if any changes were made, otherwise false
+ */
+public function delete($data) {
+	$rowNumber = $this->getRowNumber($data);
+	return $this->deleteRow($rowNumber - 1, $data);
 }
 
 /**
