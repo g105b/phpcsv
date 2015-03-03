@@ -32,4 +32,19 @@ public function testDeleteSingleRow($filePath) {
 		"Should be -1 row after delete");
 }
 
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testDeleteRemovesExpectedRow($filePath) {
+	TestHelper::createCsv($filePath);
+	$csv = new Csv($filePath);
+	$rowThree = $csv->get(3);
+	$allRows = $csv->getAll();
+	$this->assertContains($rowThree, $allRows);
+
+	$csv->deleteRow(3);
+	$allRowsAfterDelete = $csv->getAll();
+	$this->assertNotContains($rowThree, $allRowsAfterDelete);
+}
+
 }#
