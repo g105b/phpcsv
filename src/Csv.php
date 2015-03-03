@@ -425,7 +425,7 @@ public function getRowNumber($data) {
  */
 public function update($data) {
 	$rowNumber = $this->getRowNumber($data);
-	return $this->updateRow($rowNumber - 1, $data);
+	return $this->updateRow($rowNumber, $data);
 }
 
 /**

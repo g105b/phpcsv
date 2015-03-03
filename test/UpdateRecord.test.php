@@ -22,14 +22,33 @@ public function testUpdateSingleField($filePath) {
 	$csv = new Csv($filePath);
 	$csv->setIdField("rowNum");
 
-	$row = $csv->get(0);
+	$row = $csv->get(1);
 	$newFirstName = "Updated-" . $row["firstName"];
 	$row["firstName"] = $newFirstName;
 
 	$updated = $csv->update($row);
 	$this->assertTrue($updated);
 
-	$row = $csv->get(0);
+	$row = $csv->get(1);
+	$this->assertEquals($newFirstName, $row["firstName"]);
+}
+
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testUpdateRowByIndex($filePath) {
+	TestHelper::createCsv($filePath);
+	$csv = new Csv($filePath);
+
+	$csv->setIdField("rowNum");
+	$row = $csv->get(3);
+	$newFirstName = "Updated-" . $row["firstName"];
+	$row["firstName"] = $newFirstName;
+
+	$updated = $csv->updateRow(3, $row);
+	$this->assertTrue($updated);
+
+	$row = $csv->get(3);
 	$this->assertEquals($newFirstName, $row["firstName"]);
 }
 
