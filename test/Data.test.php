@@ -69,4 +69,22 @@ public function testNewLine($filePath) {
 	$this->assertEquals($fieldValue, $rowAfterUpdate[$headerName]);
 }
 
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testUnicodeData($filePath) {
+	$csv = new Csv($filePath);
+	$data = [
+		["EnglishWord" => "American", "ChineseWord" => "美国人"],
+		["EnglishWord" => "French",	"ChineseWord" => "法国人"],
+		["EnglishWord" => "German",	"ChineseWord" => "德国人"],
+	];
+
+	foreach ($data as $d) {
+		$csv->add($d);
+	}
+
+	$this->assertEquals($data[1], $csv->get(1));
+}
+
 }#
