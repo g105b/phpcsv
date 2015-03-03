@@ -382,7 +382,35 @@ private function isAssoc($array) {
  * match
  */
 public function getRowNumber($data) {
-	// TODO: Implement.
+	foreach ($this as $rowNumber => $row) {
+		if($rowNumber == 0) {
+			// Don't match on the header row!
+			continue;
+		}
+		// For speed, match on ID first, if set.
+		if(isset($data[$this->idField])) {
+			if($row[$this->idField] != $data[$this->idField]) {
+				continue;
+			}
+			return (int)$rowNumber;
+		}
+		else {
+			$foundMatch = true;
+			foreach ($data as $key => $value) {
+				// As soon as a field does not match, move to the next row.
+				if($row[$key] != $value) {
+					$foundMatch = false;
+					break;
+				}
+			}
+
+			if($foundMatch) {
+				return (int)$rowNumber;
+			}
+		}
+	}
+
+	return false;
 }
 
 /**

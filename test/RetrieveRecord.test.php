@@ -136,4 +136,52 @@ public function testGetById($filePath) {
 	$this->assertEquals($expectedResult, $result);
 }
 
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testGetRowNumber($filePath) {
+	TestHelper::createCsv($filePath);
+	$csv = new Csv($filePath);
+	$csv->setIdField("rowNum");
+	$rowNumber = $csv->getRowNumber([
+		"rowNum" => 2,
+	]);
+
+	$this->assertEquals($rowNumber, 2);
+}
+
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testGetRowNumberWithoutId($filePath) {
+	TestHelper::createCsv($filePath);
+	$csv = new Csv($filePath);
+	$rowNumber = $csv->getRowNumber([
+		"rowNum" => 3,
+	]);
+
+	$this->assertEquals(3, $rowNumber);
+}
+
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testGetRowNumberFromOtherColumns($filePath) {
+	$originalRows = TestHelper::createCsv($filePath);
+	$csv = new Csv($filePath);
+
+	$randomRowNumber = array_rand($originalRows);
+	$headers = $originalRows[0];
+	$row = [];
+	foreach($originalRows[$randomRowNumber + 1] as $headerI => $value) {
+		if($headerI > 3) {
+			// Don't add all the columns.
+			break;
+		}
+		$row[$headers[$headerI]] = $value;
+	}
+
+	$this->assertEquals($csv->getRowNumber($row), $randomRowNumber);
+}
+
 }#
