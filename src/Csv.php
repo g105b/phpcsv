@@ -35,12 +35,14 @@ public function __construct($filePath) {
 		throw new InvalidPathException($filePath);
 	}
 
+	ini_set("auto_detect_line_endings", true);
+
 	$this->file = new File($filePath, "r+");
+	$this->file->setCsvControl();
 	$this->file->setFlags(
 		File::READ_CSV |
 		File::READ_AHEAD |
-		File::SKIP_EMPTY |
-		File::DROP_NEW_LINE
+		File::SKIP_EMPTY
 	);
 	$this->saveHeaders();
 }

@@ -24,19 +24,48 @@ public function testQuotes($filePath) {
 	$headers = $csv->getHeaders();
 
 	$rowThatHasQuotes = rand(0, 10);
-	$fieldThatHasQuotes = rand(0, count($headers) - 1);
-	$fieldValue = null;
+	$fieldThatHasQuotes = rand(0, count($headers) - 2);
 
 	$headerName = $headers[$fieldThatHasQuotes];
 
 	$row = $csv->get($rowThatHasQuotes);
-	$i = 0;
 	$fieldValue = "\"I am quoted\"";
 	$row[$headerName] = $fieldValue;
 
 	$csv->updateRow($rowThatHasQuotes, $row);
 
 	$rowAfterUpdate = $csv->get($rowThatHasQuotes);
+	$this->assertEquals($fieldValue, $rowAfterUpdate[$headerName]);
+}
+
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testNewLine($filePath) {
+	TestHelper::createCsv($filePath, 10);
+	$csv = new Csv($filePath);
+	$all = $csv->getAll();
+	$numberOfRows = count($all);
+
+	$csv->setIdField("rowNum");
+	$headers = $csv->getHeaders();
+
+	$rowThatHasNewLine = rand(0, 9);
+	$fieldThatHasQuotes = rand(0, count($headers) - 2);
+
+	$headerName = $headers[$fieldThatHasQuotes];
+
+	$row = $csv->get($rowThatHasNewLine);
+	$fieldValue = "New...\n...Line!";
+	$row[$headerName] = $fieldValue;
+
+	$csv->updateRow($rowThatHasNewLine, $row);
+
+	$all = $csv->getAll(true);
+	$this->assertEquals($numberOfRows, count($all),
+		'Should have same number of rows after update');
+
+	$rowAfterUpdate = $csv->get($rowThatHasNewLine);
 	$this->assertEquals($fieldValue, $rowAfterUpdate[$headerName]);
 }
 
