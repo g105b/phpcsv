@@ -52,4 +52,25 @@ public function testUpdateRowByIndex($filePath) {
 	$this->assertEquals($newFirstName, $row["firstName"]);
 }
 
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testUpdateRowWithMissingFields($filePath) {
+	TestHelper::createCsv($filePath);
+	$csv = new Csv($filePath);
+	$csv->setIdField("rowNum");
+	$row = $csv->get(3);
+	$newFirstName = "Updated-" . $row["firstName"];
+	$row["firstName"] = $newFirstName;
+	$existingLastName = $row["lastName"];
+	unset($row["lastName"]);
+
+	$updated = $csv->update($row);
+	$this->assertTrue($updated);
+
+	$row = $csv->get(3);
+	$this->assertEquals($newFirstName, $row["firstName"]);
+	$this->assertEquals($existingLastName, $row["lastName"]);
+}
+
 }#

@@ -111,22 +111,25 @@ public function toAssociative($data) {
  * currently stored headers.
  *
  * @param array $data Associative array of data representing row
+ * @param bool $fillMissing True to fill missing indices
  *
  * @return array Indexed array of data in order of columns
  */
-public function toIndexed($data) {
+public function toIndexed($data, $fillMissing = false) {
 	foreach ($data as $key => $value) {
 		if(!in_array($key, $this->headers)) {
 			throw new InvalidFieldException($key);
 		}
-
 		$headerIndex = (int)array_search($key, $this->headers);
 		$data[$headerIndex] = $value;
 		unset($data[$key]);
 	}
 
 	ksort($data);
-	$data = $this->fillMissing($data);
+
+	if($fillMissing) {
+		$data = $this->fillMissing($data);
+	}
 	return $data;
 }
 
@@ -164,6 +167,7 @@ private function fillMissing($data, $existingData = []) {
 		}
 		ksort($data);
 	}
+
 	return $data;
 }
 
@@ -507,7 +511,7 @@ public function updateRow($rowNumber, $replaceWith) {
 				if($this->isAssoc($replaceWith)) {
 					$replaceWith = $this->toIndexed($replaceWith);
 				}
-				$replaceWith = $this->fillMissing($replaceWith);
+				$replaceWith = $this->fillMissing($replaceWith, $row);
 				$this->file->fputcsv($replaceWith);
 			}
 			$changed = true;
