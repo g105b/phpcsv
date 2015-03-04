@@ -190,6 +190,12 @@ public function getFilePath() {
  * of bounds
  */
 public function get($index = null, $fetchFields = []) {
+	if(!ctype_digit($index)
+	|| $index < 0) {
+		throw new InvalidIndexException($index);
+	}
+	$index = (int)$index;
+
 	if(is_null($index)) {
 		$index = $this->file->key() - 1;
 	}

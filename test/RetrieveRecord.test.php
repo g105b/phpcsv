@@ -195,4 +195,26 @@ public function testGetRowThatDoesNotExist($filePath) {
 	$this->assertFalse($csv->get(100));
 }
 
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testGetNonIntegerIndex_stringInt($filePath) {
+	TestHelper::createCsv($filePath, 10);
+	$csv = new Csv($filePath);
+
+	// "5" as a string is treated as a digit character
+	$this->assertNotEmpty($csv->get("5"));
+}
+
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ * @expectedException \g105b\phpcsv\InvalidIndexException
+ */
+public function testGetNonIntegerIndex_stringFloat($filePath) {
+	TestHelper::createCsv($filePath, 10);
+	$csv = new Csv($filePath);
+
+	$csv->get("5.6");
+}
+
 }#
