@@ -217,4 +217,26 @@ public function testGetNonIntegerIndex_stringFloat($filePath) {
 	$csv->get("5.6");
 }
 
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ * @expectedException \g105b\phpcsv\InvalidIndexException
+ */
+public function testGetNonIntegerIndex_string($filePath) {
+	TestHelper::createCsv($filePath, 10);
+	$csv = new Csv($filePath);
+
+	$csv->get("hello");
+}
+
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ * @expectedException \g105b\phpcsv\InvalidIndexException
+ */
+public function testGetNonIntegerIndex_negative($filePath) {
+	TestHelper::createCsv($filePath, 10);
+	$csv = new Csv($filePath);
+
+	$csv->get(-5);
+}
+
 }#
