@@ -170,7 +170,7 @@ public function testGetRowNumberFromOtherColumns($filePath) {
 	$originalRows = TestHelper::createCsv($filePath);
 	$csv = new Csv($filePath);
 
-	$randomRowNumber = array_rand($originalRows);
+	$randomRowNumber = array_rand($originalRows) - 1;
 	$headers = $originalRows[0];
 	$row = [];
 	foreach($originalRows[$randomRowNumber + 1] as $headerI => $value) {
