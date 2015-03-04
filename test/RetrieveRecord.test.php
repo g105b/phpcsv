@@ -184,4 +184,15 @@ public function testGetRowNumberFromOtherColumns($filePath) {
 	$this->assertEquals($csv->getRowNumber($row), $randomRowNumber);
 }
 
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testGetRowThatDoesNotExist($filePath) {
+	TestHelper::createCsv($filePath, 10);
+	$csv = new Csv($filePath);
+
+	// There are only 10 rows.
+	$this->assertFalse($csv->get(100));
+}
+
 }#
