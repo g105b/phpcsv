@@ -453,7 +453,7 @@ public function update($data) {
  */
 public function delete($data) {
 	$rowNumber = $this->getRowNumber($data);
-	return $this->deleteRow($rowNumber - 1, $data);
+	return $this->deleteRow($rowNumber, $data);
 }
 
 /**

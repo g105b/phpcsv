@@ -36,7 +36,7 @@ public function testDeleteSingleRow($filePath) {
  * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
  */
 public function testDeleteRemovesExpectedRow($filePath) {
-	TestHelper::createCsv($filePath);
+	TestHelper::createCsv($filePath, 10);
 	$csv = new Csv($filePath);
 	$rowThree = $csv->get(3);
 	$allRows = $csv->getAll();
@@ -45,6 +45,24 @@ public function testDeleteRemovesExpectedRow($filePath) {
 	$csv->deleteRow(3);
 	$allRowsAfterDelete = $csv->getAll();
 	$this->assertNotContains($rowThree, $allRowsAfterDelete);
+}
+
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testDeleteByReferenceRemovesExpectedRow($filePath) {
+	TestHelper::createCsv($filePath, 10);
+	$csv = new Csv($filePath);
+	$rowThree = $csv->get(3);
+	$allRows = $csv->getAll();
+	$this->assertContains($rowThree, $allRows);
+
+	$csv->delete($rowThree);
+	$allRowsAfterDelete = $csv->getAll();
+	$this->assertNotContains($rowThree, $allRowsAfterDelete);
+
+	$searchResult = $csv->getAllBy("firstName", $rowThree["firstName"]);
+	$this->assertNotContains($rowThree, $searchResult);
 }
 
 }#
