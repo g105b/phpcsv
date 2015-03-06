@@ -191,7 +191,7 @@ public function getFilePath() {
  */
 public function get($index = null, $fetchFields = []) {
 	if(is_null($index)) {
-		$index = $this->file->key() - 1;
+		$index = $this->file->key();
 	}
 	else {
 		if(!(is_int($index) || ctype_digit($index))
@@ -208,13 +208,13 @@ public function get($index = null, $fetchFields = []) {
 	while($index >= $this->file->key()) {
 		$this->file->next();
 	}
+	// $this->file->next();
 
 	if(!$this->file->valid()) {
 		return false;
 	}
 
 	$data = $this->file->current();
-	$this->file->next();
 
 	$row = $this->toAssociative($data);
 	return $row;

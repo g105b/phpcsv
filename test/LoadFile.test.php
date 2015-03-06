@@ -92,7 +92,7 @@ public function testGetIncrements($filePath) {
 	$originalRows = TestHelper::createCsv($filePath, 10);
 	$csv = new Csv($filePath);
 
-	$rowNumber = 0;
+	$rowNumber = 1;
 	while($row = $csv->get()) {
 		$rowNumber++;
 

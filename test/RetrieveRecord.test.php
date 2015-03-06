@@ -23,7 +23,19 @@ public function testGetDoesNotGiveHeaderRow($filePath) {
 	$headers = $csv->getHeaders();
 	$firstRow = $csv->get(0);
 
-	$this->assertNotEquals($headers, $firstRow);
+	$this->assertNotEquals($headers, array_values($firstRow));
+}
+
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testGetAllDoesNotGiveHeaderRow($filePath) {
+	TestHelper::createCsv($filePath, 10);
+	$csv = new Csv($filePath);
+	$headers = $csv->getHeaders();
+	$allRows = $csv->getAll();
+
+	$this->assertNotEquals($headers, array_values($allRows[0]));
 }
 
 /**
