@@ -237,7 +237,6 @@ public function testAddingEmptyFields($filePath) {
 		"Job Title" => "Surgical Registrar",
 	]);
 
-	// $row = $csv->get(0);
 	$row = $csv->get(1);
 	$this->assertInternalType("array", $row);
 	$this->assertCount(3, $row);
