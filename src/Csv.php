@@ -45,6 +45,7 @@ public function __construct($filePath) {
 		File::SKIP_EMPTY
 	);
 	$this->saveHeaders();
+	$this->file->rewind();
 }
 
 public function current() {
@@ -201,14 +202,13 @@ public function get($index = null, $fetchFields = []) {
 		$index = (int)$index;
 	}
 
-	if($index <= $this->file->key()) {
+	if($index <= $this->file->key() + 1) {
 		$this->file->rewind();
 	}
 
 	while($index >= $this->file->key()) {
 		$this->file->next();
 	}
-	// $this->file->next();
 
 	if(!$this->file->valid()) {
 		return false;

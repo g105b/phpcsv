@@ -180,12 +180,12 @@ public function testGetRowNumberWithoutId($filePath) {
  */
 public function testGetRowNumberFromOtherColumns($filePath) {
 	$originalRows = TestHelper::createCsv($filePath);
+	$headers = array_shift($originalRows);
 	$csv = new Csv($filePath);
 
-	$randomRowNumber = array_rand($originalRows) - 1;
-	$headers = $originalRows[0];
+	$randomRowNumber = array_rand($originalRows);
 	$row = [];
-	foreach($originalRows[$randomRowNumber + 1] as $headerI => $value) {
+	foreach($originalRows[$randomRowNumber] as $headerI => $value) {
 		if($headerI > 3) {
 			// Don't add all the columns.
 			break;
