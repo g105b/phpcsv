@@ -278,7 +278,12 @@ $fetchFields = [], $count = 0) {
  */
 public function getBy($fieldName, $fieldValue, $fetchFields = []) {
 	$result = $this->getAllBy($fieldName, $fieldValue, $fetchFields, 1);
-	return $result[0];
+	if(isset($result[0])) {
+		return $result[0];
+	}
+	else {
+		return null;
+	}
 }
 
 /**
