@@ -263,4 +263,26 @@ public function testAddInvalidField($filePath) {
 	]);
 }
 
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testAddingMissingFieldsAssociative($filePath) {
+	$csv = new Csv($filePath);
+	$csv->add([
+		"firstName" => "Alan",
+		"lastName" => "Statham",
+		"Job Title" => "Consultant Radiologist",
+	]);
+
+	$csv->add([
+		// We could add the name later.
+		"Job Title" => "Surgical Registrar",
+	]);
+
+	$row = $csv->get(1);
+	$this->assertArrayHasKey("firstName", $row);
+	$this->assertArrayHasKey("lastName", $row);
+	$this->assertArrayHasKey("Job Title", $row);
+}
+
 }#
