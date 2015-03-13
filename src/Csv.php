@@ -160,7 +160,7 @@ private function fillMissing($data, $existingData = []) {
 	}
 	else {
 		end($this->headers);
-		for($i = 0, $max = key($this->headers); $i < $max; $i++) {
+		for($i = 0, $max = key($this->headers); $i <= $max; $i++) {
 			if(!isset($data[$i])) {
 				$replaceWith = isset($existingData[$i])
 					? $existingData[$i]

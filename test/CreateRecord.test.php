@@ -283,6 +283,15 @@ public function testAddingMissingFieldsAssociative($filePath) {
 	$this->assertArrayHasKey("firstName", $row);
 	$this->assertArrayHasKey("lastName", $row);
 	$this->assertArrayHasKey("Job Title", $row);
+
+	$csv->add([
+		"firstName" => "Martin",
+	]);
+
+	$row = $csv->get(2);
+	$this->assertArrayHasKey("firstName", $row);
+	$this->assertArrayHasKey("lastName", $row);
+	$this->assertArrayHasKey("Job Title", $row);
 }
 
 /**
@@ -301,6 +310,15 @@ public function testAddingMissingFieldsIndexed($filePath) {
 	]);
 
 	$row = $csv->get(1);
+	$this->assertArrayHasKey("firstName", $row);
+	$this->assertArrayHasKey("lastName", $row);
+	$this->assertArrayHasKey("Job Title", $row);
+
+	$csv->add([
+		0 => "Martin",
+	]);
+
+	$row = $csv->get(2);
 	$this->assertArrayHasKey("firstName", $row);
 	$this->assertArrayHasKey("lastName", $row);
 	$this->assertArrayHasKey("Job Title", $row);
