@@ -352,7 +352,7 @@ public function add($row) {
 			$this->headers = array_keys($row);
 			$this->file->fputcsv($this->headers);
 		}
-		$rowColumns = $this->toIndexed($row);
+		$rowColumns = $this->toIndexed($row, true);
 	}
 	else {
 		$rowAssociative = $this->toAssociative($row);
@@ -361,6 +361,8 @@ public function add($row) {
 	if(!$this->headers) {
 		throw new HeadersNotSetException();
 	}
+
+	$rowColumns = $this->fillMissing($rowColumns);
 
 	$this->file->fseek(0, SEEK_END);
 	$this->file->fputcsv($rowColumns);
