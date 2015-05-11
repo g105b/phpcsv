@@ -59,6 +59,7 @@ public function key() {
 
 public function next() {
 	$this->file->next();
+	$this->fixEmpty();
 }
 
 public function rewind() {
@@ -66,6 +67,7 @@ public function rewind() {
 }
 
 public function valid() {
+	$this->fixEmpty();
 	return $this->file->valid();
 }
 
@@ -85,6 +87,17 @@ private function checkIdField() {
 		if(strtolower($this->idField) == strtolower($header)) {
 			$this->setIdField($header);
 		}
+	}
+}
+
+/**
+ * Ensures that the current line is not empty/malformed.
+ */
+private function fixEmpty() {
+	$current = $this->file->current();
+	while($this->file->valid() && is_null($current[0])) {
+		$this->file->next();
+		$current = $this->file->current();
 	}
 }
 
@@ -212,7 +225,6 @@ public function getFilePath() {
  * of bounds
  */
 public function get($index = null, $fetchFields = []) {
-
 	if(is_null($index)) {
 		$index = $this->file->key();
 	}
