@@ -87,4 +87,38 @@ public function testUnicodeData($filePath) {
 	$this->assertEquals($data[1], $csv->get(1));
 }
 
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testIdFieldCase($filePath) {
+	$idFieldArray = [
+		"id",
+		"ID",
+		"Id",
+	];
+
+	foreach($idFieldArray as $idField) {
+		$data = [
+			[$idField => 1, "number" => "one"],
+			[$idField => 2, "number" => "two"],
+			[$idField => 3, "number" => "three"],
+		];
+
+		if(!is_dir(dirname($filePath))) {
+			mkdir(dirname($filePath), 0775, true);
+		}
+
+		$fh = fopen($filePath, "w");
+		fputcsv($fh, [$idField, "number"]);
+		foreach($data as $d) {
+			fputcsv($fh, $d);
+		}
+		fclose($fh);
+
+		$csv = new Csv($filePath);
+		$row = $csv->getById(2);
+		$this->assertEquals("two", $row["number"], print_r($row, true));
+	}
+}
+
 }#

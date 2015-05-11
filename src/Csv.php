@@ -44,6 +44,7 @@ public function __construct($filePath) {
 		File::READ_AHEAD |
 		File::SKIP_EMPTY
 	);
+
 	$this->saveHeaders();
 	$this->file->rewind();
 }
@@ -69,6 +70,25 @@ public function valid() {
 }
 
 /**
+ * Check the header line for variations on the default ID field name, fixing
+ * the case of the ID field.
+ */
+private function checkIdField() {
+	if(is_null($this->headers)) {
+		return;
+	}
+	if(in_array($this->idField, $this->headers)) {
+		return;
+	}
+
+	foreach($this->headers as $header) {
+		if(strtolower($this->idField) == strtolower($header)) {
+			$this->setIdField($header);
+		}
+	}
+}
+
+/**
  * Save the first line of the CSV to $this->headers, according to the current
  * CSV control settings.
  */
@@ -80,6 +100,7 @@ private function saveHeaders() {
 	}
 
 	$this->file->next();
+	$this->checkIdField();
 }
 
 /**
@@ -191,6 +212,7 @@ public function getFilePath() {
  * of bounds
  */
 public function get($index = null, $fetchFields = []) {
+
 	if(is_null($index)) {
 		$index = $this->file->key();
 	}
@@ -311,7 +333,7 @@ public function setIdField($idField) {
  */
 public function getIdField() {
 	if(!in_array($this->idField, $this->headers)) {
-		return null;
+		throw new InvalidFieldException($this->idField);
 	}
 
 	return $this->idField;
@@ -328,7 +350,7 @@ public function getIdField() {
  * found
  */
 public function getById($idValue, $fetchFields = []) {
-	return $this->getBy($this->idField, $idValue);
+	return $this->getBy($this->getIdField(), $idValue);
 }
 
 /**
