@@ -135,4 +135,26 @@ public function testConstructWithPathToDirectory($filePath) {
 	$csv = new Csv($filePath);
 }
 
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testFileNotCreatedWhenNoChanges($filePath) {
+	$csv = new Csv($filePath);
+	$csv->getAll();
+	$csv = null;
+
+	$this->assertFileNotExists($filePath);
+}
+
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testFileNotDeletedWhenChanges($filePath) {
+	$csv = new Csv($filePath);
+	$csv->add(["key" => "value"]);
+	$csv = null;
+
+	$this->assertFileExists($filePath);
+}
+
 }#

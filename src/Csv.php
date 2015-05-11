@@ -19,8 +19,11 @@ private $file;
 private $filePath;
 private $headers;
 private $idField = "ID";
+private $autoCreate;
+private $fileExistsAtStart;
+private $changesMade = false;
 
-public function __construct($filePath) {
+public function __construct($filePath, $autoCreate = false) {
 	$this->filePath = $filePath;
 
 	if(!file_exists($filePath)) {
@@ -37,6 +40,8 @@ public function __construct($filePath) {
 
 	ini_set("auto_detect_line_endings", true);
 
+	$this->autoCreate = $autoCreate;
+	$this->fileExistsAtStart = file_exists($filePath);
 	$this->file = new File($filePath, "r+");
 	$this->file->setCsvControl();
 	$this->file->setFlags(
@@ -47,6 +52,13 @@ public function __construct($filePath) {
 
 	$this->saveHeaders();
 	$this->file->rewind();
+}
+
+public function __destruct() {
+	if(!$this->changesMade && !$this->autoCreate) {
+		$this->file = null;
+		unlink($this->filePath);
+	}
 }
 
 public function current() {
@@ -378,6 +390,7 @@ public function getById($idValue, $fetchFields = []) {
  * @return array Returns the added row in associative form
  */
 public function add($row) {
+	$this->changesMade = true;
 	$rowColumns = $row;
 	$rowAssociative = $row;
 
@@ -522,6 +535,7 @@ public function deleteRow($rowNumber) {
  * @return boolean True if any changes were made, otherwise false
  */
 public function updateRow($rowNumber, $replaceWith) {
+	$this->changesMade = true;
 	$changed = false;
 	$rowNumberArray = [];
 
@@ -551,7 +565,6 @@ public function updateRow($rowNumber, $replaceWith) {
 	$temp->rewind();
 	$this->file->ftruncate(0);
 	$this->file->fseek(0);
-	$rowNumber = 0;
 	foreach ($temp as $rowNumber => $row) {
 		if(in_array($rowNumber - 1, $rowNumberArray)) {
 			// Current row is to be updated or deleted. Do not write original
