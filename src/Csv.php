@@ -42,7 +42,8 @@ public function __construct($filePath) {
 	$this->file->setFlags(
 		File::READ_CSV |
 		File::READ_AHEAD |
-		File::SKIP_EMPTY
+		File::SKIP_EMPTY |
+		File::DROP_NEW_LINE
 	);
 	$this->saveHeaders();
 	$this->file->rewind();

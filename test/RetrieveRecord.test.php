@@ -251,4 +251,43 @@ public function testGetNonIntegerIndex_negative($filePath) {
 	$csv->get(-5);
 }
 
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testEmptyLine($filePath) {
+	TestHelper::createCsv($filePath);
+
+	// Force a few empty lines into the file by reading it as an array,
+	// clearing 10 random lines, then writing the file again.
+	$lines = file($filePath);
+	$totalLinesIncludingEmptyAndHeaders = count($lines);
+	// Generate 10 random keys:
+	$emptyRowArray = array_rand($lines, 10);
+	// Make sure none of them are the header row:
+	foreach($emptyRowArray as $i => $emptyRow) {
+		if($emptyRow == 0) {
+			do {
+				$emptyRow = array_rand($lines);
+			} while(in_array($emptyRow, $emptyRowArray));
+			$emptyRowArray[$i] = $emptyRow;
+		}
+	}
+	foreach($emptyRowArray as $emptyRow) {
+		$lines[$emptyRow] = "\n";
+	}
+	// Write back the file.
+	file_put_contents($filePath, implode("", $lines));
+
+	$csv = new Csv($filePath);
+	$rowCount = 1;
+	foreach($csv as $rowNumber => $columns) {
+		$rowCount++;
+		$this->assertNotEmpty($columns);
+		$this->assertNotEmpty($columns["firstName"]);
+	}
+
+	$this->assertEquals($totalLinesIncludingEmptyAndHeaders - 10, $rowCount,
+		"Should be 10 rows missing");
+}
+
 }#
