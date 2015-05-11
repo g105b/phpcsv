@@ -42,8 +42,7 @@ public function __construct($filePath) {
 	$this->file->setFlags(
 		File::READ_CSV |
 		File::READ_AHEAD |
-		File::SKIP_EMPTY |
-		File::DROP_NEW_LINE
+		File::SKIP_EMPTY
 	);
 	$this->saveHeaders();
 	$this->file->rewind();
@@ -59,6 +58,7 @@ public function key() {
 
 public function next() {
 	$this->file->next();
+	$this->fixEmpty();
 }
 
 public function rewind() {
@@ -66,7 +66,19 @@ public function rewind() {
 }
 
 public function valid() {
+	$this->fixEmpty();
 	return $this->file->valid();
+}
+
+/**
+ * Ensures that the current line is not empty/malformed.
+ */
+private function fixEmpty() {
+	$current = $this->file->current();
+	while($this->file->valid() && is_null($current[0])) {
+		$this->file->next();
+		$current = $this->file->current();
+	}
 }
 
 /**

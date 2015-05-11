@@ -279,11 +279,20 @@ public function testEmptyLine($filePath) {
 	file_put_contents($filePath, implode("", $lines));
 
 	$csv = new Csv($filePath);
+
+	$this->assertInstanceOf("\g105b\phpcsv\Csv", $csv);
+
 	$rowCount = 1;
-	foreach($csv as $rowNumber => $columns) {
-		$rowCount++;
-		$this->assertNotEmpty($columns);
-		$this->assertNotEmpty($columns["firstName"]);
+	try {
+
+		foreach($csv as $rowNumber => $columns) {
+			$rowCount++;
+			$this->assertNotEmpty($columns);
+			$this->assertNotEmpty($columns["firstName"]);
+		}
+	}
+	catch(Exception $e) {
+		die("WHAT>???????????????");
 	}
 
 	$this->assertEquals($totalLinesIncludingEmptyAndHeaders - 10, $rowCount,
