@@ -57,7 +57,9 @@ public function __construct($filePath, $autoCreate = false) {
 public function __destruct() {
 	if(!$this->changesMade && !$this->autoCreate) {
 		$this->file = null;
-		unlink($this->filePath);
+		if(file_exists($this->filePath)) {
+			unlink($this->filePath);
+		}
 	}
 }
 
