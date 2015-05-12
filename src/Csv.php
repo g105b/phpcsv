@@ -25,6 +25,7 @@ private $changesMade = false;
 
 public function __construct($filePath, $autoCreate = false) {
 	$this->filePath = $filePath;
+	$this->fileExistsAtStart = file_exists($filePath);
 
 	if(!file_exists($filePath)) {
 		if(!is_dir(dirname($filePath)) ) {
@@ -41,7 +42,6 @@ public function __construct($filePath, $autoCreate = false) {
 	ini_set("auto_detect_line_endings", true);
 
 	$this->autoCreate = $autoCreate;
-	$this->fileExistsAtStart = file_exists($filePath);
 	$this->file = new File($filePath, "r+");
 	$this->file->setCsvControl();
 	$this->file->setFlags(
