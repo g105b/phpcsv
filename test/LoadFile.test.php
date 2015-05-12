@@ -157,4 +157,16 @@ public function testFileNotDeletedWhenChanges($filePath) {
 	$this->assertFileExists($filePath);
 }
 
+/**
+ * @dataProvider \g105b\phpcsv\TestHelper::data_randomFilePath
+ */
+public function testFileNotDeletedWhenExists($filePath) {
+	TestHelper::createCsv($filePath, 10);
+	$csv = new Csv($filePath);
+	$csv->getAll();
+	$csv = null;
+
+	$this->assertFileExists($filePath);
+}
+
 }#
