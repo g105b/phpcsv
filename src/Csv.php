@@ -362,7 +362,8 @@ public function setIdField($idField) {
  * exist in the CSV
  */
 public function getIdField() {
-	if(!in_array($this->idField, $this->headers)) {
+	if(!empty($this->headers)
+	&& !in_array($this->idField, $this->headers)) {
 		throw new InvalidFieldException($this->idField);
 	}
 
