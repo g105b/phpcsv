@@ -55,6 +55,7 @@ public function __construct($filePath, $autoCreate = false) {
 }
 
 public function __destruct() {
+	$this->file->flock(LOCK_UN);
 	$this->file = null;
 	if($this->fileExistsAtStart) {
 		return;
@@ -112,11 +113,15 @@ private function checkIdField() {
  * Ensures that the current line is not empty/malformed.
  */
 private function fixEmpty() {
+	$this->file->flock(LOCK_EX);
+
 	$current = $this->file->current();
 	while($this->file->valid() && is_null($current[0])) {
 		$this->file->next();
 		$current = $this->file->current();
 	}
+
+	$this->file->flock(LOCK_UN);
 }
 
 /**
@@ -124,6 +129,7 @@ private function fixEmpty() {
  * CSV control settings.
  */
 private function saveHeaders() {
+	$this->file->flock(LOCK_EX);
 	$this->file->rewind();
 	$headers = $this->file->current();
 	if(!empty($headers)) {
@@ -131,6 +137,8 @@ private function saveHeaders() {
 	}
 
 	$this->file->next();
+	$this->file->flock(LOCK_UN);
+
 	$this->checkIdField();
 }
 
@@ -243,6 +251,8 @@ public function getFilePath() {
  * of bounds
  */
 public function get($index = null, $fetchFields = []) {
+	$this->file->flock(LOCK_EX);
+
 	if(is_null($index)) {
 		$index = $this->file->key();
 	}
@@ -263,10 +273,12 @@ public function get($index = null, $fetchFields = []) {
 	}
 
 	if(!$this->file->valid()) {
+		$this->file->flock(LOCK_UN);
 		return false;
 	}
 
 	$data = $this->file->current();
+	$this->file->flock(LOCK_UN);
 
 	$row = $this->toAssociative($data);
 	return $row;
@@ -300,6 +312,7 @@ public function getAll() {
  */
 public function getAllBy($fieldName, $fieldValue,
 $fetchFields = [], $count = 0) {
+	$this->file->flock(LOCK_EX);
 	$this->file->rewind();
 
 	$result = [];
@@ -313,6 +326,7 @@ $fetchFields = [], $count = 0) {
 			$result []= $row;
 		}
 	}
+	$this->file->flock(LOCK_UN);
 
 	return $result;
 }
@@ -401,6 +415,8 @@ public function add($row) {
 	$rowColumns = $row;
 	$rowAssociative = $row;
 
+	$this->file->flock(LOCK_EX);
+
 	if($this->isAssoc($row)) {
 		if(!$this->headers) {
 			$this->headers = array_keys($row);
@@ -421,6 +437,8 @@ public function add($row) {
 	$this->file->fseek(0, SEEK_END);
 	$this->file->fputcsv($rowColumns);
 	$this->file->fflush();
+
+	$this->file->flock(LOCK_UN);
 	return $rowAssociative;
 }
 
@@ -562,6 +580,7 @@ public function updateRow($rowNumber, $replaceWith) {
 		File::DROP_NEW_LINE
 	);
 
+	$this->file->flock(LOCK_EX);
 	$this->file->fseek(0);
 
 	// Copy contents of file into temp:
@@ -590,6 +609,8 @@ public function updateRow($rowNumber, $replaceWith) {
 
 		$this->file->fputcsv($row);
 	}
+
+	$this->file->flock(LOCK_UN);
 
 	return $changed;
 }
