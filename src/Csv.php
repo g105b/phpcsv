@@ -90,6 +90,20 @@ public function valid() {
 	return $this->file->valid();
 }
 
+private function lock() {
+	$lockCounter = 0;
+	$lockMax = 1000;
+
+	while(!$this->file->flock(LOCK_EX)) {
+		if($lockCounter > $lockMax) {
+			throw new FileLockException();
+		}
+
+		usleep(100);
+		$lockCounter++;
+	}
+}
+
 /**
  * Check the header line for variations on the default ID field name, fixing
  * the case of the ID field.
@@ -113,7 +127,7 @@ private function checkIdField() {
  * Ensures that the current line is not empty/malformed.
  */
 private function fixEmpty() {
-	$this->file->flock(LOCK_EX);
+	$this->lock();
 
 	$current = $this->file->current();
 	while($this->file->valid() && is_null($current[0])) {
@@ -129,7 +143,7 @@ private function fixEmpty() {
  * CSV control settings.
  */
 private function saveHeaders() {
-	$this->file->flock(LOCK_EX);
+	$this->lock();
 	$this->file->rewind();
 	$headers = $this->file->current();
 	if(!empty($headers)) {
@@ -251,7 +265,7 @@ public function getFilePath() {
  * of bounds
  */
 public function get($index = null, $fetchFields = []) {
-	$this->file->flock(LOCK_EX);
+	$this->lock();
 
 	if(is_null($index)) {
 		$index = $this->file->key();
@@ -312,7 +326,7 @@ public function getAll() {
  */
 public function getAllBy($fieldName, $fieldValue,
 $fetchFields = [], $count = 0) {
-	$this->file->flock(LOCK_EX);
+	$this->lock();
 	$this->file->rewind();
 
 	$result = [];
@@ -415,7 +429,7 @@ public function add($row) {
 	$rowColumns = $row;
 	$rowAssociative = $row;
 
-	$this->file->flock(LOCK_EX);
+	$this->lock();
 
 	if($this->isAssoc($row)) {
 		if(!$this->headers) {
@@ -580,7 +594,7 @@ public function updateRow($rowNumber, $replaceWith) {
 		File::DROP_NEW_LINE
 	);
 
-	$this->file->flock(LOCK_EX);
+	$this->lock();
 	$this->file->fseek(0);
 
 	// Copy contents of file into temp:
