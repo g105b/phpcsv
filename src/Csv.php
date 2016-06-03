@@ -374,10 +374,6 @@ public function getBy($fieldName, $fieldValue, $fetchFields = []) {
  * @return string The successfully-set ID field
  */
 public function setIdField($idField) {
-	if(!in_array($idField, $this->headers)) {
-		throw new InvalidFieldException($idField);
-	}
-
 	$this->idField = $idField;
 	return $idField;
 }
